@@ -33,9 +33,8 @@ SOFTWARE.
 /**
  * @brief Filter Object abstract class template
  * @tparam T floating point type (float/double)
- * @tparam blockSize The block size of the filter (optional)
  */
-template<std::floating_point T, size_t blockSize = 0>
+template<std::floating_point T>
 class FilterObject {
 public:
     virtual ~FilterObject() = default;
@@ -46,25 +45,9 @@ public:
      * @param sample The input sample
      * @return The processed sample
      */
-    virtual auto process(const T &sample) -> std::optional<T> {
+    virtual auto process(T &sample) -> bool {
         if (m_filter.has_value()) {
-            return m_filter->process(sample);
-        }
-        return std::nullopt;
-    }
-    /**
-     * @brief Process a block of samples
-     * @details Processes a block of samples of audio data
-     * @param samples A pointer to the block of samples. The samples are edited
-     * in-place. This assumes that the pointer has enough memory allocated to
-     * pull out blockSize samples and is inherently unsafe. For block,
-     * processing, it's safer to use the block process methods with either a
-     * std::vector or std::array.
-     * @return True if the samples were processed successfully, false otherwise
-     */
-    virtual auto process(T *samples) -> bool {
-        if (m_filter.has_value()) {
-            m_filter->process(samples);
+            m_filter->process(sample);
             return true;
         }
         return false;
@@ -83,35 +66,6 @@ public:
     virtual auto process(T *samples, size_t count) -> bool {
         if (m_filter.has_value()) {
             m_filter->process(samples, count);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * @brief Process a block of samples
-     * @details Processes a block of samples of audio data. Since this method
-     * uses a std::vector as input, we don't need to rely on blockSize being
-     * passed in. The samples are edited in place.
-     * @param samples A vector of samples
-     * @return True if the samples were processed successfully, false otherwise
-     */
-    virtual auto process(std::vector<T> &samples) -> bool {
-        if (m_filter.has_value()) {
-            m_filter->process(samples);
-            return true;
-        }
-        return false;
-    }
-    /**
-     * @brief Process a block of samples
-     * @details Processes a block of samples of audio data. The samples are
-     * processed in-place.
-     * @param samples An array of samples
-     * @return True if the samples were processed successfully, false otherwise
-     */
-    virtual auto process(std::array<T, blockSize> &samples) -> bool {
-        if (m_filter.has_value()) {
-            m_filter->process(samples);
             return true;
         }
         return false;
@@ -272,7 +226,7 @@ protected:
         return true;
     }
     /** The underlying digital biquad filter */
-    std::optional<DigitalBiquadFilter<T, blockSize>> m_filter = std::nullopt;
+    std::optional<DigitalBiquadFilter<T>> m_filter = std::nullopt;
     /** The cutoff frequency of the filter */
     double m_cutoff = 0.0;
     /** The sample rate of the input signal */

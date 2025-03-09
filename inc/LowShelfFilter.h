@@ -36,8 +36,8 @@ SOFTWARE.
  * the gain is defined in decibels.
  * @see DigitalBiquadFilter
  */
-template<std::floating_point T, size_t blockSize = 0>
-class LowShelfFilter final : public FilterObject<T, blockSize> {
+template<std::floating_point T>
+class LowShelfFilter final : public FilterObject<T> {
 public:
     /**
      * @brief Create a low shelf filter
@@ -51,8 +51,7 @@ public:
     static auto create(double cutoff, int sampleRate,
                        double qFactor = 0.7071067811865476, double gain = 6.0)
             -> std::optional<LowShelfFilter> {
-        if (!FilterObject<T, blockSize>::verify_parameters(cutoff, sampleRate,
-                                                           qFactor)) {
+        if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
             return std::nullopt;
         }
         auto obj = LowShelfFilter(cutoff, sampleRate, qFactor, gain);
@@ -78,8 +77,7 @@ private:
         this->m_qFactor = qFactor;
         this->m_gain = gain;
         Coefficients<T> coefficients = LowShelfFilter::calculate_coefficients();
-        this->m_filter =
-                DigitalBiquadFilter<T, blockSize>::create(coefficients);
+        this->m_filter = DigitalBiquadFilter<T>::create(coefficients);
     }
     /**
      * @brief Calculate the filter coefficients

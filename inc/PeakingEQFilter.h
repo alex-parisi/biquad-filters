@@ -35,8 +35,8 @@ SOFTWARE.
  * frequencies. This filter is useful for creating a parametric equalizer.
  * @see DigitalBiquadFilter
  */
-template<std::floating_point T, size_t blockSize = 0>
-class PeakingEQFilter final : public FilterObject<T, blockSize> {
+template<std::floating_point T>
+class PeakingEQFilter final : public FilterObject<T> {
 public:
     /**
      * @brief Create a peaking EQ filter
@@ -50,8 +50,7 @@ public:
     static auto create(double cutoff, int sampleRate,
                        double qFactor = 0.7071067811865476, double gain = 6.0)
             -> std::optional<PeakingEQFilter> {
-        if (!FilterObject<T, blockSize>::verify_parameters(cutoff, sampleRate,
-                                                           qFactor)) {
+        if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
             return std::nullopt;
         }
         auto obj = PeakingEQFilter(cutoff, sampleRate, qFactor, gain);
@@ -78,8 +77,7 @@ private:
         this->m_gain = gain;
         Coefficients<T> coefficients =
                 PeakingEQFilter::calculate_coefficients();
-        this->m_filter =
-                DigitalBiquadFilter<T, blockSize>::create(coefficients);
+        this->m_filter = DigitalBiquadFilter<T>::create(coefficients);
     }
     /**
      * @brief Calculate the filter coefficients

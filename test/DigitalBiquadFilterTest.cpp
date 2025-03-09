@@ -65,9 +65,9 @@ TEST(DigitalBiquadFilterTest, ProcessDoubleSample) {
     std::optional<DigitalBiquadFilter<double>> filter =
             DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
-    constexpr double sample = 1.0;
-    const double result = filter->process(sample);
-    EXPECT_FLOAT_EQ(result, 1.0);
+    double sample = 1.0;
+    filter->process(sample);
+    EXPECT_FLOAT_EQ(sample, 1.0);
 }
 
 /**
@@ -83,9 +83,9 @@ TEST(DigitalBiquadFilterTest, ProcessFloatSample) {
     std::optional<DigitalBiquadFilter<float>> filter =
             DigitalBiquadFilter<float>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
-    constexpr float sample = 1.0f;
-    const float result = filter->process(sample);
-    EXPECT_FLOAT_EQ(result, 1.0f);
+    float sample = 1.0f;
+    filter->process(sample);
+    EXPECT_FLOAT_EQ(sample, 1.0f);
 }
 
 /**
@@ -98,7 +98,7 @@ TEST(DigitalBiquadFilterTest, ProcessVectorOfDoubleSamples) {
             DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
     std::vector<double> samples = {1.0, 0.5, 0.25};
-    filter->process(samples);
+    filter->process(samples.data(), samples.size());
     EXPECT_FLOAT_EQ(samples[0], 1.0);
     EXPECT_FLOAT_EQ(samples[1], 0.5);
     EXPECT_FLOAT_EQ(samples[2], 0.25);
@@ -118,7 +118,7 @@ TEST(DigitalBiquadFilterTest, ProcessVectorOfFloatSamples) {
             DigitalBiquadFilter<float>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
     std::vector<float> samples = {1.0f, 0.5f, 0.25f};
-    filter->process(samples);
+    filter->process(samples.data(), samples.size());
     EXPECT_FLOAT_EQ(samples[0], 1.0f);
     EXPECT_FLOAT_EQ(samples[1], 0.5f);
     EXPECT_FLOAT_EQ(samples[2], 0.25f);
@@ -130,11 +130,11 @@ TEST(DigitalBiquadFilterTest, ProcessVectorOfFloatSamples) {
 TEST(DigitalBiquadFilterTest, ProcessArrayOfDoubleSamples) {
     constexpr Coefficients<double> coefficients = {
             .b0 = 1.0, .b1 = 0.0, .b2 = 0.0, .a0 = 1.0, .a1 = 0.0, .a2 = 0.0};
-    std::optional<DigitalBiquadFilter<double, 3>> filter =
-            DigitalBiquadFilter<double, 3>::create(coefficients);
+    std::optional<DigitalBiquadFilter<double>> filter =
+            DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
     std::array<double, 3> samples = {1.0, 0.5, 0.25};
-    filter->process(samples);
+    filter->process(samples.data(), samples.size());
     EXPECT_FLOAT_EQ(samples[0], 1.0);
     EXPECT_FLOAT_EQ(samples[1], 0.5);
     EXPECT_FLOAT_EQ(samples[2], 0.25);
@@ -150,11 +150,11 @@ TEST(DigitalBiquadFilterTest, ProcessArrayOfFloatSamples) {
                                                   .a0 = 1.0f,
                                                   .a1 = 0.0f,
                                                   .a2 = 0.0f};
-    std::optional<DigitalBiquadFilter<float, 3>> filter =
-            DigitalBiquadFilter<float, 3>::create(coefficients);
+    std::optional<DigitalBiquadFilter<float>> filter =
+            DigitalBiquadFilter<float>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
     std::array<float, 3> samples = {1.0f, 0.5f, 0.25f};
-    filter->process(samples);
+    filter->process(samples.data(), samples.size());
     EXPECT_FLOAT_EQ(samples[0], 1.0f);
     EXPECT_FLOAT_EQ(samples[1], 0.5f);
     EXPECT_FLOAT_EQ(samples[2], 0.25f);
@@ -169,10 +169,12 @@ TEST(DigitalBiquadFilterTest, ResetFilter) {
     std::optional<DigitalBiquadFilter<double>> filter =
             DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
-    filter->process(1.0);
+    double sample = 1.0;
+    filter->process(sample);
     filter.reset();
-    const double result = filter->process(1.0);
-    EXPECT_FLOAT_EQ(result, 1.0);
+    double newSample = 1.0;
+    filter->process(newSample);
+    EXPECT_FLOAT_EQ(newSample, 1.0);
 }
 
 /**
@@ -184,9 +186,9 @@ TEST(DigitalBiquadFilterTest, ProcessWithZeroCoefficients) {
     std::optional<DigitalBiquadFilter<double>> filter =
             DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
-    constexpr double sample = 1.0;
-    const double result = filter->process(sample);
-    EXPECT_FLOAT_EQ(result, 0.0);
+    double sample = 1.0;
+    filter->process(sample);
+    EXPECT_FLOAT_EQ(sample, 0.0);
 }
 
 /**
@@ -195,11 +197,11 @@ TEST(DigitalBiquadFilterTest, ProcessWithZeroCoefficients) {
 TEST(DigitalBiquadFilterTest, ProcessBlockOfZeros) {
     constexpr Coefficients<double> coefficients = {
             .b0 = 1.0, .b1 = 0.0, .b2 = 0.0, .a0 = 1.0, .a1 = 0.0, .a2 = 0.0};
-    std::optional<DigitalBiquadFilter<double, 5>> filter =
-            DigitalBiquadFilter<double, 5>::create(coefficients);
+    std::optional<DigitalBiquadFilter<double>> filter =
+            DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
     std::array<double, 5> samples = {0.0, 0.0, 0.0, 0.0, 0.0};
-    filter->process(samples);
+    filter->process(samples.data(), samples.size());
     EXPECT_FLOAT_EQ(samples[0], 0.0);
 }
 
@@ -209,11 +211,11 @@ TEST(DigitalBiquadFilterTest, ProcessBlockOfZeros) {
 TEST(DigitalBiquadFilterTest, ProcessRampSignal) {
     constexpr Coefficients<double> coefficients = {
             .b0 = 1.0, .b1 = 0.0, .b2 = 0.0, .a0 = 1.0, .a1 = 0.0, .a2 = 0.0};
-    std::optional<DigitalBiquadFilter<double, 5>> filter =
-            DigitalBiquadFilter<double, 5>::create(coefficients);
+    std::optional<DigitalBiquadFilter<double>> filter =
+            DigitalBiquadFilter<double>::create(coefficients);
     EXPECT_TRUE(filter.has_value());
     std::array<double, 5> samples = {0.0, 1.0, 2.0, 3.0, 4.0};
-    filter->process(samples);
+    filter->process(samples.data(), samples.size());
     EXPECT_FLOAT_EQ(samples[0], 0.0);
     EXPECT_FLOAT_EQ(samples[1], 1.0);
     EXPECT_FLOAT_EQ(samples[2], 2.0);
@@ -228,9 +230,9 @@ TEST(DigitalBiquadFilterTest, ProcessLargeValues) {
     constexpr Coefficients<double> coefficients = {
             .b0 = 1.0, .b1 = 0.0, .b2 = 0.0, .a0 = 1.0, .a1 = 0.0, .a2 = 0.0};
     auto filter = DigitalBiquadFilter<double>::create(coefficients).value();
-    constexpr double largeSample = 1e6;
-    const double result = filter.process(largeSample);
-    EXPECT_FLOAT_EQ(result, largeSample);
+    double largeSample = 1e6;
+    filter.process(largeSample);
+    EXPECT_FLOAT_EQ(largeSample, largeSample);
 }
 
 /**
@@ -240,7 +242,7 @@ TEST(DigitalBiquadFilterTest, ProcessWithNegativeCoefficients) {
     constexpr Coefficients<double> coefficients = {
             .b0 = -1.0, .b1 = 0.0, .b2 = 0.0, .a0 = 1.0, .a1 = 0.0, .a2 = 0.0};
     auto filter = DigitalBiquadFilter<double>::create(coefficients).value();
-    constexpr double sample = 1.0;
-    const double result = filter.process(sample);
-    EXPECT_FLOAT_EQ(result, -1.0);
+    double sample = 1.0;
+    filter.process(sample);
+    EXPECT_FLOAT_EQ(sample, -1.0);
 }

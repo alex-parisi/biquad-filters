@@ -25,9 +25,7 @@ SOFTWARE.
 #ifndef DIGITAL_BIQUAD_FILTER_H
 #define DIGITAL_BIQUAD_FILTER_H
 
-#include <array>
 #include <optional>
-#include <vector>
 
 /**
  * @brief Coefficients Struct
@@ -55,7 +53,7 @@ struct State {
  * by applying the following difference equation: y[n] = b0*x[n] + b1*x[n-1] +
  * b2*x[n-2] - a1*y[n-1] - a2*y[n-2]
  */
-template<std::floating_point T, size_t blockSize = 0>
+template<std::floating_point T>
 class DigitalBiquadFilter {
 public:
     /**
@@ -74,11 +72,10 @@ public:
     }
     /**
      * @brief Process a sample
-     * @details Processes a single sample of audio data
+     * @details Processes a single sample of audio data in-place
      * @param sample The input sample
-     * @return The processed sample
      */
-    auto process(const T &sample) -> T {
+    auto process(T &sample) -> void {
         const T output =
                 ((m_coefficients.b0 / m_coefficients.a0) * sample) +
                 ((m_coefficients.b1 / m_coefficients.a0) * m_state.x1) +
@@ -89,28 +86,9 @@ public:
         m_state.x1 = sample;
         m_state.y2 = m_state.y1;
         m_state.y1 = output;
+        sample = output;
 
         m_iter++;
-        return output;
-    }
-    /**
-     * @brief Process a block of samples
-     * @details Processes a block of samples of audio data
-     * @param samples A pointer to the block of samples. The samples are edited
-     * in-place. This assumes that the pointer has enough memory allocated to
-     * pull out blockSize samples and is inherently unsafe. For block,
-     * processing, it's safer to use the block process methods with either a
-     * std::vector or std::array.
-     * @return True if the samples were processed successfully, false otherwise
-     */
-    auto process(T *samples) -> bool {
-        if (blockSize <= 0 || samples == nullptr) {
-            return false;
-        }
-        for (size_t i = 0; i < blockSize; ++i) {
-            samples[i] = process(samples[i]);
-        }
-        return true;
     }
     /**
      * @brief Process a block of samples
@@ -119,8 +97,7 @@ public:
      * in-place.
      * @param count The number of samples in the block
      * This assumes that the pointer has enough memory allocated to pull out
-     * count samples and is inherently unsafe. For block, processing, it's safer
-     * to use the block process methods with either a std::vector or std::array.
+     * count samples.
      * @return True if the samples were processed successfully, false otherwise
      */
     auto process(T *samples, const size_t count) -> bool {
@@ -128,40 +105,7 @@ public:
             return false;
         }
         for (size_t i = 0; i < count; ++i) {
-            samples[i] = process(samples[i]);
-        }
-        return true;
-    }
-    /**
-     * @brief Process a block of samples
-     * @details Processes a block of samples of audio data. Since this method
-     * uses a std::vector as input, we don't need to rely on blockSize being
-     * passed in. The samples are edited in place.
-     * @param samples A vector of samples
-     * @return True if the samples were processed successfully, false otherwise
-     */
-    auto process(std::vector<T> &samples) -> bool {
-        if (samples.empty()) {
-            return false;
-        }
-        for (auto &sample: samples) {
-            sample = process(sample);
-        }
-        return true;
-    }
-    /**
-     * @brief Process a block of samples
-     * @details Processes a block of samples of audio data. The samples are
-     * edited in place.
-     * @param samples An array of samples
-     * @return True if the samples were processed successfully, false otherwise
-     */
-    auto process(std::array<T, blockSize> &samples) -> bool {
-        if (blockSize <= 0) {
-            return false;
-        }
-        for (size_t i = 0; i < blockSize; ++i) {
-            samples[i] = process(samples[i]);
+            process(samples[i]);
         }
         return true;
     }

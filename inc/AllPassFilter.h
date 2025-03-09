@@ -35,8 +35,8 @@ SOFTWARE.
  * various frequencies. This filter is useful for creating a notch filter.
  * @see DigitalBiquadFilter
  */
-template<std::floating_point T, size_t blockSize = 0>
-class AllPassFilter final : public FilterObject<T, blockSize> {
+template<std::floating_point T>
+class AllPassFilter final : public FilterObject<T> {
 public:
     /**
      * @brief Create an all pass filter
@@ -49,8 +49,7 @@ public:
     static auto create(double cutoff, int sampleRate,
                        double qFactor = 0.7071067811865476)
             -> std::optional<AllPassFilter> {
-        if (!FilterObject<T, blockSize>::verify_parameters(cutoff, sampleRate,
-                                                           qFactor)) {
+        if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
             return std::nullopt;
         }
         auto obj = AllPassFilter(cutoff, sampleRate, qFactor);
@@ -74,8 +73,7 @@ private:
         this->m_sampleRate = sampleRate;
         this->m_qFactor = qFactor;
         Coefficients<T> coefficients = AllPassFilter::calculate_coefficients();
-        this->m_filter =
-                DigitalBiquadFilter<T, blockSize>::create(coefficients);
+        this->m_filter = DigitalBiquadFilter<T>::create(coefficients);
     }
 
     /**
