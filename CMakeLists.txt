@@ -11,227 +11,52 @@ set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=-*,modernize-*")
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-# DigitalBiquadFilter Test
-set(DIGITAL_BIQUAD_FILTER_TEST_SOURCES
-        test/DigitalBiquadFilterTest.cpp
+set(TEST_SOURCES
+        DigitalBiquadFilter
+        LowPassFilter
+        HighPassFilter
+        BandPassFilter
+        NotchFilter
+        AllPassFilter
+        PeakingEQFilter
+        LowShelfFilter
+        HighShelfFilter
 )
-add_executable(DigitalBiquadFilterTest ${DIGITAL_BIQUAD_FILTER_TEST_SOURCES})
-target_include_directories(DigitalBiquadFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(DigitalBiquadFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(DigitalBiquadFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(DigitalBiquadFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(DigitalBiquadFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_DigitalBiquadFilter COMMAND DigitalBiquadFilterTest)
 
-# LowPassFilter Test
-set(LOW_PASS_FILTER_TEST_SOURCES
-        test/LowPassFilterTest.cpp
-)
-add_executable(LowPassFilterTest ${LOW_PASS_FILTER_TEST_SOURCES})
-target_include_directories(LowPassFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(LowPassFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(LowPassFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(LowPassFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(LowPassFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_LowPassFilter COMMAND LowPassFilterTest)
+# Define a function to reduce redundancy
+function(add_filter_test test_name)
+    set(test_exe ${test_name}Test)
+    set(test_source test/${test_name}Test.cpp)
 
-# HighPassFilter Test
-set(HIGH_PASS_FILTER_TEST_SOURCES
-        test/HighPassFilterTest.cpp
-)
-add_executable(HighPassFilterTest ${HIGH_PASS_FILTER_TEST_SOURCES})
-target_include_directories(HighPassFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(HighPassFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(HighPassFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(HighPassFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(HighPassFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_HighPassFilter COMMAND HighPassFilterTest)
+    add_executable(${test_exe} ${test_source})
 
-# HighPassFilter Test
-set(BAND_PASS_FILTER_TEST_SOURCES
-        test/BandPassFilterTest.cpp
-)
-add_executable(BandPassFilterTest ${BAND_PASS_FILTER_TEST_SOURCES})
-target_include_directories(BandPassFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(BandPassFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(BandPassFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(BandPassFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(BandPassFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_BandPassFilterTest COMMAND BandPassFilterTest)
+    target_include_directories(${test_exe} PRIVATE
+            ${GTEST_INCLUDE_DIRS}
+            ${CMAKE_CURRENT_SOURCE_DIR}/inc
+    )
 
-# NotchFilter Test
-set(NOTCH_FILTER_TEST_SOURCES
-        test/NotchFilterTest.cpp
-)
-add_executable(NotchFilterTest ${NOTCH_FILTER_TEST_SOURCES})
-target_include_directories(NotchFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(NotchFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(NotchFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(NotchFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(NotchFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_NotchFilterTest COMMAND NotchFilterTest)
+    target_link_libraries(${test_exe} PRIVATE
+            GTest::gtest_main
+    )
 
-# AllPassFilter Test
-set(ALL_PASS_FILTER_TEST_SOURCES
-        test/AllPassFilterTest.cpp
-)
-add_executable(AllPassFilterTest ${ALL_PASS_FILTER_TEST_SOURCES})
-target_include_directories(AllPassFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(AllPassFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(AllPassFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(AllPassFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(AllPassFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_AllPassFilterTest COMMAND AllPassFilterTest)
+    target_compile_options(${test_exe} PRIVATE
+            -fsanitize=address
+            -fno-omit-frame-pointer
+            -Wall
+    )
 
-# PeakingEQFilter Test
-set(PEAKING_EQ_FILTER_TEST_SOURCES
-        test/PeakingEQFilterTest.cpp
-)
-add_executable(PeakingEQFilterTest ${PEAKING_EQ_FILTER_TEST_SOURCES})
-target_include_directories(PeakingEQFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(PeakingEQFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(PeakingEQFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(PeakingEQFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(PeakingEQFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_PeakingEQFilterTest COMMAND PeakingEQFilterTest)
+    target_link_options(${test_exe} PRIVATE
+            -fsanitize=address
+    )
 
-# LowShelfFilter Test
-set(LOW_SHELF_FILTER_TEST_SOURCES
-        test/LowShelfFilterTest.cpp
-)
-add_executable(LowShelfFilterTest ${LOW_SHELF_FILTER_TEST_SOURCES})
-target_include_directories(LowShelfFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(LowShelfFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(LowShelfFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(LowShelfFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(LowShelfFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_LowShelfFilterTest COMMAND LowShelfFilterTest)
+    set_target_properties(${test_exe} PROPERTIES
+            CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
+    )
 
-# HighShelfFilter Test
-set(HIGH_SHELF_FILTER_TEST_SOURCES
-        test/HighShelfFilterTest.cpp
-)
-add_executable(HighShelfFilterTest ${HIGH_SHELF_FILTER_TEST_SOURCES})
-target_include_directories(HighShelfFilterTest PRIVATE
-        ${GTEST_INCLUDE_DIRS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/inc
-)
-target_link_libraries(HighShelfFilterTest PRIVATE
-        GTest::gtest_main
-)
-target_compile_options(HighShelfFilterTest PRIVATE
-        -fsanitize=address
-        -fno-omit-frame-pointer
-        -Wall
-)
-target_link_options(HighShelfFilterTest PRIVATE
-        -fsanitize=address
-)
-set_target_properties(HighShelfFilterTest PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-add_test(NAME test_HighShelfFilterTest COMMAND HighShelfFilterTest)
+    add_test(NAME test_${test_name} COMMAND ${test_exe})
+endfunction()
+
+# Add all tests using the function
+foreach(test ${TEST_SOURCES})
+    add_filter_test(${test})
+endforeach()
