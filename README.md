@@ -42,6 +42,4 @@ If the filter is invalid, and you try to process data with it, the filter will n
 
 ### Notes:
 
-- It's always recommended to template the filters as `double` for the best precision to and reduce the chance of encountering quantization noise.
-- The safest and fastest way to process a block of data is by templating the filter with a block size and passing in an array with the same block size.
-    - If the block size is not templated, you can still process a block of data by passing in a pointer to the data and the size of the block. When using arrays, this is still usually safe. 
+- It's always recommended to template the filters as `double` for the best precision to and reduce the chance of encountering quantization noise. 
