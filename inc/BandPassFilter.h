@@ -35,7 +35,7 @@ SOFTWARE.
  * outside of that range.
  * @see DigitalBiquadFilter
  */
-template<std::floating_point T>
+template<std::floating_point T = double>
 class BandPassFilter final : public FilterObject<T> {
 public:
     /**
@@ -47,8 +47,7 @@ public:
      * @param constantSkirtGain Whether to use a constant skirt gain or not
      * @return A band pass filter object
      */
-    static auto create(double cutoff, int sampleRate,
-                       double qFactor = 0.7071067811865476,
+    static auto create(T cutoff, int sampleRate, T qFactor = 0.7071067811865476,
                        bool constantSkirtGain = false)
             -> std::optional<BandPassFilter> {
         if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
@@ -71,8 +70,8 @@ private:
      * @param qFactor The quality factor of the filter
      * @param constantSkirtGain Whether to use a constant skirt gain or not
      */
-    BandPassFilter(const double cutoff, const int sampleRate,
-                   const double qFactor, const bool constantSkirtGain) {
+    BandPassFilter(const T cutoff, const int sampleRate, const T qFactor,
+                   const bool constantSkirtGain) {
         this->m_cutoff = cutoff;
         this->m_sampleRate = sampleRate;
         this->m_qFactor = qFactor;

@@ -31,7 +31,7 @@ SOFTWARE.
  * @brief Coefficients Struct
  * @details A struct containing the coefficients of a digital biquad filter
  */
-template<std::floating_point T>
+template<std::floating_point T = double>
 struct Coefficients {
     T b0, b1, b2, a0, a1, a2;
 };
@@ -40,7 +40,7 @@ struct Coefficients {
  * @brief State Struct
  * @details A struct containing the state variables of a digital biquad filter
  */
-template<std::floating_point T>
+template<std::floating_point T = double>
 struct State {
     T x1, x2, y1, y2;
 };
@@ -53,7 +53,7 @@ struct State {
  * by applying the following difference equation: y[n] = b0*x[n] + b1*x[n-1] +
  * b2*x[n-2] - a1*y[n-1] - a2*y[n-2]
  */
-template<std::floating_point T>
+template<std::floating_point T = double>
 class DigitalBiquadFilter {
 public:
     /**

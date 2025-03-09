@@ -35,7 +35,7 @@ SOFTWARE.
  * with frequencies higher than the cutoff frequency.
  * @see DigitalBiquadFilter
  */
-template<std::floating_point T>
+template<std::floating_point T = double>
 class LowPassFilter final : public FilterObject<T> {
 public:
     /**
@@ -46,8 +46,7 @@ public:
      * 0.7071067811865476, or 1/sqrt(2)
      * @return A low pass filter object
      */
-    static auto create(double cutoff, int sampleRate,
-                       double qFactor = 0.7071067811865476)
+    static auto create(T cutoff, int sampleRate, T qFactor = 0.7071067811865476)
             -> std::optional<LowPassFilter> {
         if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
             return std::nullopt;
@@ -67,8 +66,7 @@ private:
      * @param sampleRate The sample rate of the input signal
      * @param qFactor The quality factor of the filter
      */
-    LowPassFilter(const double cutoff, const int sampleRate,
-                  const double qFactor) {
+    LowPassFilter(const T cutoff, const int sampleRate, const T qFactor) {
         this->m_cutoff = cutoff;
         this->m_sampleRate = sampleRate;
         this->m_qFactor = qFactor;

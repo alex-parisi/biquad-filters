@@ -34,7 +34,7 @@ SOFTWARE.
  * @brief Filter Object abstract class template
  * @tparam T floating point type (float/double)
  */
-template<std::floating_point T>
+template<std::floating_point T = double>
 class FilterObject {
 public:
     virtual ~FilterObject() = default;
@@ -76,7 +76,7 @@ public:
      * @return True if the cutoff frequency was set successfully, false
      * otherwise
      */
-    virtual auto set_cutoff(const double cutoff) -> bool {
+    virtual auto set_cutoff(const T cutoff) -> bool {
         if (cutoff <= 0) {
             return false;
         }
@@ -92,7 +92,7 @@ public:
      * @brief Get the cutoff frequency of the filter
      * @return The cutoff frequency of the filter
      */
-    [[nodiscard]] virtual auto get_cutoff() const -> double { return m_cutoff; }
+    [[nodiscard]] virtual auto get_cutoff() const -> T { return m_cutoff; }
     /**
      * @brief Set the sample rate of the input signal
      * @param sampleRate The sample rate of the input signal
@@ -122,7 +122,7 @@ public:
      * @param qFactor The quality factor of the filter
      * @return True if the quality factor was set successfully, false otherwise
      */
-    virtual auto set_q_factor(const double qFactor) -> bool {
+    virtual auto set_q_factor(const T qFactor) -> bool {
         if (qFactor <= 0) {
             return false;
         }
@@ -138,15 +138,13 @@ public:
      * @brief Get the quality factor of the filter
      * @return The quality factor of the filter
      */
-    [[nodiscard]] virtual auto get_q_factor() const -> double {
-        return m_qFactor;
-    }
+    [[nodiscard]] virtual auto get_q_factor() const -> T { return m_qFactor; }
     /**
      * @brief Set the bandwidth of the filter
      * @param bandwidth The bandwidth of the filter
      * @return True if the bandwidth was set successfully, false otherwise
      */
-    virtual auto set_bandwidth(const float bandwidth) -> bool {
+    virtual auto set_bandwidth(const T bandwidth) -> bool {
         if (bandwidth <= 0) {
             return false;
         }
@@ -158,7 +156,7 @@ public:
      * @brief Get the bandwidth of the filter
      * @return The bandwidth of the filter
      */
-    [[nodiscard]] virtual auto get_bandwidth() const -> double {
+    [[nodiscard]] virtual auto get_bandwidth() const -> T {
         const double bandwidth =
                 2.0 * std::asinh(1.0 / (2.0 * m_qFactor)) / std::log10(2.0);
         return bandwidth;
@@ -168,7 +166,7 @@ public:
      * @param gain The gain of the filter
      * @return True if the gain was set successfully, false otherwise
      */
-    virtual auto set_gain(const double gain) -> bool {
+    virtual auto set_gain(const T gain) -> bool {
         m_gain = gain;
         Coefficients<T> newCoefficients = calculate_coefficients();
         if (m_filter.has_value()) {
@@ -181,7 +179,7 @@ public:
      * @brief Get the gain of the filter
      * @return The gain of the filter
      */
-    [[nodiscard]] virtual auto get_gain() const -> double { return m_gain; }
+    [[nodiscard]] virtual auto get_gain() const -> T { return m_gain; }
     /**
      * @brief Set the constant skirt gain of the filter
      * @param constantSkirtGain Whether to use a constant skirt gain or not
@@ -228,13 +226,13 @@ protected:
     /** The underlying digital biquad filter */
     std::optional<DigitalBiquadFilter<T>> m_filter = std::nullopt;
     /** The cutoff frequency of the filter */
-    double m_cutoff = 0.0;
+    T m_cutoff = 0.0;
     /** The sample rate of the input signal */
     int m_sampleRate = 0;
     /** The quality factor of the filter */
-    double m_qFactor = 0.0;
+    T m_qFactor = 0.0;
     /** The gain of the filter */
-    double m_gain = 0.0;
+    T m_gain = 0.0;
     /** Whether to use a constant skirt gain or not */
     bool m_constantSkirtGain = false;
 };
