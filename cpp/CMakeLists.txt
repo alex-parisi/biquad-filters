@@ -5,11 +5,25 @@ set(CMAKE_CXX_STANDARD 20)
 
 enable_testing()
 
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
-set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=-*,modernize-*")
-
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
+    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=-*,modernize-*")
+    if (NOT MSVC)
+        set(TARGET_COMPILE_OPTIONS -fsanitize=address -fno-omit-frame-pointer -Wall)
+        set(TARGET_LINK_OPTIONS -fsanitize=address)
+    else()
+        set(TARGET_COMPILE_OPTIONS -Wall)
+        set(TARGET_LINK_OPTIONS "")
+    endif()
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(TARGET_COMPILE_OPTIONS -O3 -DNDEBUG -Wall)
+    set(TARGET_LINK_OPTIONS "")
+else()
+    message(FATAL_ERROR "Unsupported build type: ${CMAKE_BUILD_TYPE}")
+endif ()
 
 #############
 ### TESTS ###
@@ -43,18 +57,17 @@ function(add_filter_test test_name)
             GTest::gtest_main
     )
 
-    set_target_properties(${test_exe} PROPERTIES
-            CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-    )
-    if ((NOT MSVC) AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
-        target_compile_options(${test_exe} PRIVATE
-                -fsanitize=address
-                -fno-omit-frame-pointer
-        )
-        target_link_options(${test_exe} PRIVATE
-                -fsanitize=address
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        set_target_properties(${test_exe} PROPERTIES
+                CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
         )
     endif ()
+    target_compile_options(${test_exe} PRIVATE
+            ${TARGET_COMPILE_OPTIONS}
+    )
+    target_link_options(${test_exe} PRIVATE
+            ${TARGET_LINK_OPTIONS}
+    )
 
     add_test(NAME test_${test_name} COMMAND ${test_exe})
 endfunction()
@@ -75,15 +88,14 @@ add_executable(BiquadProfiler ${PROFILER_SOURCES})
 target_include_directories(BiquadProfiler PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/inc
 )
-set_target_properties(BiquadProfiler PROPERTIES
-        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
-)
-if ((NOT MSVC) AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
-    target_compile_options(BiquadProfiler PRIVATE
-            -fsanitize=address
-            -fno-omit-frame-pointer
-    )
-    target_link_options(BiquadProfiler PRIVATE
-            -fsanitize=address
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set_target_properties(BiquadProfiler PROPERTIES
+            CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
     )
 endif ()
+target_compile_options(BiquadProfiler PRIVATE
+        ${TARGET_COMPILE_OPTIONS}
+)
+target_link_options(BiquadProfiler PRIVATE
+        ${TARGET_LINK_OPTIONS}
+)
