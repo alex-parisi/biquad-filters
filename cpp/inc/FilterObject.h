@@ -27,6 +27,7 @@ SOFTWARE.
 
 #include <cstddef>
 #include <optional>
+#include <cmath>
 
 #include "DigitalBiquadFilter.h"
 
