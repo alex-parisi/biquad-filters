@@ -46,6 +46,15 @@ function(add_filter_test test_name)
     set_target_properties(${test_exe} PROPERTIES
             CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
     )
+    if ((NOT MSVC) AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+        target_compile_options(${test_exe} PRIVATE
+                -fsanitize=address
+                -fno-omit-frame-pointer
+        )
+        target_link_options(${test_exe} PRIVATE
+                -fsanitize=address
+        )
+    endif ()
 
     add_test(NAME test_${test_name} COMMAND ${test_exe})
 endfunction()
@@ -69,3 +78,12 @@ target_include_directories(BiquadProfiler PRIVATE
 set_target_properties(BiquadProfiler PROPERTIES
         CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
 )
+if ((NOT MSVC) AND (CMAKE_BUILD_TYPE STREQUAL "Debug"))
+    target_compile_options(BiquadProfiler PRIVATE
+            -fsanitize=address
+            -fno-omit-frame-pointer
+    )
+    target_link_options(BiquadProfiler PRIVATE
+            -fsanitize=address
+    )
+endif ()

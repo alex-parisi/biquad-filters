@@ -15,7 +15,7 @@
       "binaryDir": "${sourceDir}/build/debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_CXX_FLAGS_DEBUG": "-fsanitize=address -fno-omit-frame-pointer -Wall",
+        "CMAKE_CXX_FLAGS_DEBUG": "-Wall",
         "CMAKE_EXE_LINKER_FLAGS_DEBUG": "-fsanitize=address"
       }
     },
