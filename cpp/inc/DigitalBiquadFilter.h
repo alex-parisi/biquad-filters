@@ -135,9 +135,6 @@ public:
      * in-place.
      * @param count The number of samples in the block
      */
-#if defined(_MSC_VER)
-#pragma warning(suppress : 5045)
-#endif
     void process_block_scalar(T *samples, const size_t count) {
         if (!samples || count <= 0) {
             return;
