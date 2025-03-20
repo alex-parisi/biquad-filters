@@ -37,6 +37,7 @@ SOFTWARE.
 template<std::floating_point T = double>
 class FilterObject {
 public:
+    using value_type = T;
     virtual ~FilterObject() = default;
 
     /**
@@ -46,6 +47,8 @@ public:
      * @return The processed sample
      */
     virtual auto process(T &sample) -> bool {
+        if (m_bypass)
+            return false;
         if (m_filter.has_value()) {
             m_filter->process(sample);
             return true;
@@ -64,6 +67,8 @@ public:
      * @return True if the samples were processed successfully, false otherwise
      */
     virtual auto process(T *samples, size_t count) -> bool {
+        if (m_bypass)
+            return false;
         if (m_filter.has_value()) {
             m_filter->process(samples, count);
             return true;
@@ -201,6 +206,18 @@ public:
         return m_constantSkirtGain;
     }
 
+    /**
+     * @brief Set the bypass state of the filter
+     * @param bypass Whether to bypass the filter or not
+     */
+    virtual auto set_bypass(const bool bypass) -> void { m_bypass = bypass; }
+
+    /**
+     * @brief Get the bypass state of the filter
+     * @return Whether the filter is bypassed or not
+     */
+    [[nodiscard]] virtual auto get_bypass() const -> bool { return m_bypass; }
+
 protected:
     /**
      * @brief Calculate the filter coefficients
@@ -235,6 +252,8 @@ protected:
     T m_gain = 0.0;
     /** Whether to use a constant skirt gain or not */
     bool m_constantSkirtGain = false;
+    /** Bypass */
+    bool m_bypass = false;
 };
 
 #endif // FILTER_OBJECT_H

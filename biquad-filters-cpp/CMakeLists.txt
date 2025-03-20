@@ -11,6 +11,10 @@ set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=-*,modernize-*")
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
+#############
+### TESTS ###
+#############
+
 set(TEST_SOURCES
         DigitalBiquadFilter
         LowPassFilter
@@ -39,16 +43,6 @@ function(add_filter_test test_name)
             GTest::gtest_main
     )
 
-    target_compile_options(${test_exe} PRIVATE
-            -fsanitize=address
-            -fno-omit-frame-pointer
-            -Wall
-    )
-
-    target_link_options(${test_exe} PRIVATE
-            -fsanitize=address
-    )
-
     set_target_properties(${test_exe} PROPERTIES
             CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
     )
@@ -57,6 +51,21 @@ function(add_filter_test test_name)
 endfunction()
 
 # Add all tests using the function
-foreach(test ${TEST_SOURCES})
+foreach (test ${TEST_SOURCES})
     add_filter_test(${test})
-endforeach()
+endforeach ()
+
+################
+### Profiler ###
+################
+
+set(PROFILER_SOURCES
+        src/Profiler.cpp
+)
+add_executable(BiquadProfiler ${PROFILER_SOURCES})
+target_include_directories(BiquadProfiler PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/inc
+)
+set_target_properties(BiquadProfiler PROPERTIES
+        CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}"
+)

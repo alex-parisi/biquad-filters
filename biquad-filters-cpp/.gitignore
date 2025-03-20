@@ -1,0 +1,4 @@
+build/
+.idea/
+.clang-format
+*.DS_Store

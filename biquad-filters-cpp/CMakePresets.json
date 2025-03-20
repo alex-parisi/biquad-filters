@@ -1,0 +1,62 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 19,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "debug",
+      "displayName": "Debug Build",
+      "description": "Enable debug flags and AddressSanitizer",
+      "hidden": false,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS_DEBUG": "-fsanitize=address -fno-omit-frame-pointer -Wall",
+        "CMAKE_EXE_LINKER_FLAGS_DEBUG": "-fsanitize=address"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release Build",
+      "description": "Optimized release build with no debug symbols",
+      "hidden": false,
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_FLAGS_RELEASE": "-O3 -DNDEBUG -Wall",
+        "CMAKE_EXE_LINKER_FLAGS_RELEASE": ""
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "description": "Build Debug version",
+      "hidden": false
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "description": "Build Release version",
+      "hidden": false
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "debug",
+      "configurePreset": "debug",
+      "description": "Run tests in Debug mode"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "description": "Run tests in Release mode"
+    }
+  ]
+}
