@@ -39,6 +39,7 @@ template<std::floating_point T = double>
 class FilterObject {
 public:
     using value_type = T;
+    FilterObject() = default;
     FilterObject(const FilterObject& other) = default;
     FilterObject(FilterObject&& other) noexcept = default;
     virtual ~FilterObject() = default;
