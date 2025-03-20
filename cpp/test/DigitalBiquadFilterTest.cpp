@@ -171,7 +171,7 @@ TEST(DigitalBiquadFilterTest, ResetFilter) {
     EXPECT_TRUE(filter.has_value());
     double sample = 1.0;
     filter->process(sample);
-    filter.reset();
+    filter->reset();
     double newSample = 1.0;
     filter->process(newSample);
     EXPECT_FLOAT_EQ(newSample, 1.0);
