@@ -28,6 +28,10 @@ SOFTWARE.
 #include "DigitalBiquadFilter.h"
 #include "FilterObject.h"
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846264338327950288)
+#endif
+
 /**
  * @brief All Pass Filter
  * @details An all pass filter is a signal processing filter that passes all

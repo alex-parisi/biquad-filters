@@ -28,6 +28,10 @@ SOFTWARE.
 #include "DigitalBiquadFilter.h"
 #include "FilterObject.h"
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846264338327950288)
+#endif
+
 /**
  * @brief Band Pass Filter
  * @details A band pass filter is a filter that passes signals with a

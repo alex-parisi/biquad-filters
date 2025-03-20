@@ -28,6 +28,10 @@ SOFTWARE.
 #include "DigitalBiquadFilter.h"
 #include "FilterObject.h"
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846264338327950288)
+#endif
+
 /**
  * @brief High Pass Filter
  * @details A high pass filter is a filter that passes signals with a

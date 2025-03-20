@@ -28,6 +28,10 @@ SOFTWARE.
 #include "DigitalBiquadFilter.h"
 #include "FilterObject.h"
 
+#ifndef M_PI
+#define M_PI (3.14159265358979323846264338327950288)
+#endif
+
 /**
  * @brief Low Shelf Filter
  * @details A low shelf filter is a type of peaking EQ filter that boosts or
