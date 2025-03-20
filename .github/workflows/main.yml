@@ -89,7 +89,14 @@ jobs:
           echo "Running vcvarsall.bat"
           
           # Run vcvarsall.bat to set up the MSVC environment
-          cmd.exe /c "call `"$VCVARS`" x64 && set" | Out-File -Encoding ascii $env:GITHUB_ENV
+          $VCVARS_OUTPUT = cmd.exe /c "call `"$VCVARS`" x64 >nul && set"
+          
+          # Extract required environment variables
+          $VCVARS_OUTPUT -split "`r`n" | ForEach-Object {
+              if ($_ -match "^(Path|INCLUDE|LIB|LIBPATH|VCToolsInstallDir|VisualStudioVersion|VSINSTALLDIR)=") {
+                  echo "$_" >> $env:GITHUB_ENV
+              }
+          }
 
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
