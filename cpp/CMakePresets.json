@@ -7,7 +7,7 @@
   },
   "configurePresets": [
     {
-      "name": "debug",
+      "name": "Debug",
       "displayName": "Debug Build",
       "description": "Enable debug flags and AddressSanitizer",
       "hidden": false,
@@ -20,7 +20,7 @@
       }
     },
     {
-      "name": "release",
+      "name": "Release",
       "displayName": "Release Build",
       "description": "Optimized release build with no debug symbols",
       "hidden": false,
@@ -35,27 +35,27 @@
   ],
   "buildPresets": [
     {
-      "name": "debug",
-      "configurePreset": "debug",
+      "name": "Debug",
+      "configurePreset": "Debug",
       "description": "Build Debug version",
       "hidden": false
     },
     {
-      "name": "release",
-      "configurePreset": "release",
+      "name": "Release",
+      "configurePreset": "Release",
       "description": "Build Release version",
       "hidden": false
     }
   ],
   "testPresets": [
     {
-      "name": "debug",
-      "configurePreset": "debug",
+      "name": "Debug",
+      "configurePreset": "Debug",
       "description": "Run tests in Debug mode"
     },
     {
-      "name": "release",
-      "configurePreset": "release",
+      "name": "Release",
+      "configurePreset": "Release",
       "description": "Run tests in Release mode"
     }
   ]
