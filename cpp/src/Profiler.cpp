@@ -22,10 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <array>
 #include <chrono>
 #include <iostream>
 #include <vector>
-#include <array>
 
 #include "DigitalBiquadFilter.h"
 
@@ -38,8 +38,7 @@ auto benchmark_creation(const int N, Args &&...args)
     std::chrono::duration<double> result{};
     for (int i = 0; i < N; i++) {
         const auto start = std::chrono::high_resolution_clock::now();
-        [[maybe_unused]] auto instance =
-                T::create(std::forward<Args>(args)...);
+        [[maybe_unused]] auto instance = T::create(std::forward<Args>(args)...);
         const auto end = std::chrono::high_resolution_clock::now();
         result += end - start;
     }
@@ -64,13 +63,8 @@ auto benchmark_process(const int N, Args &&...args)
     };
     using ValueType =
             typename std::remove_pointer_t<decltype(instance)>::value_type;
-    if constexpr (std::is_same_v<ValueType, double>) {
-        double sample = 0.0;
-        benchmark(sample);
-    } else if constexpr (std::is_same_v<ValueType, float>) {
-        float sample = 0.0f;
-        benchmark(sample);
-    }
+    auto sample = static_cast<ValueType>(0.0);
+    benchmark(sample);
     return result / N;
 }
 
@@ -85,26 +79,23 @@ auto benchmark_block_process(const int N, const int blockSize, Args &&...args)
     auto benchmark = [&](auto *samples) {
         for (int i = 0; i < N; i++) {
             const auto start = std::chrono::high_resolution_clock::now();
-            instance.process(samples, blockSize);
+            instance.process(samples, static_cast<std::size_t>(blockSize));
             const auto end = std::chrono::high_resolution_clock::now();
             result += end - start;
         }
     };
     using ValueType =
             typename std::remove_pointer_t<decltype(instance)>::value_type;
-    if constexpr (std::is_same_v<ValueType, double>) {
-        std::vector<double> samples(blockSize, 0.0);
-        benchmark(samples.data());
-    } else if constexpr (std::is_same_v<ValueType, float>) {
-        std::vector<float> samples(blockSize, 0.0f);
-        benchmark(samples.data());
-    }
+    std::vector<ValueType> samples(static_cast<std::size_t>(blockSize),
+                                   static_cast<ValueType>(0.0));
+    benchmark(samples.data());
     return result / N;
 }
 
 auto main() -> int {
     constexpr int N = 100000;
-    constexpr std::array<int, 10> blockSizes = {16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192};
+    constexpr std::array<int, 10> blockSizes = {
+            {16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192}};
 
     constexpr Coefficients<double> doubleCoefficients = {
             .b0 = 1.0, .b1 = 0.0, .b2 = 0.0, .a0 = 1.0, .a1 = 0.0, .a2 = 0.0};
@@ -129,15 +120,14 @@ auto main() -> int {
         std::cout << "| Creation = " << avgTimeNs << " ns\n";
     }
     {
-        const auto avgTime =
-                benchmark_process<DigitalBiquadFilter<double>>(
-                        N, doubleCoefficients);
+        const auto avgTime = benchmark_process<DigitalBiquadFilter<double>>(
+                N, doubleCoefficients);
         const auto avgTimeNs =
                 std::chrono::duration_cast<std::chrono::nanoseconds>(avgTime)
                         .count();
         std::cout << "| Process = " << avgTimeNs << " ns\n";
     }
-    for (const int blockSize : blockSizes) {
+    for (const int blockSize: blockSizes) {
         const auto avgTime =
                 benchmark_block_process<DigitalBiquadFilter<double>>(
                         N, blockSize, doubleCoefficients);
@@ -162,15 +152,14 @@ auto main() -> int {
         std::cout << "| Creation = " << avgTimeNs << " ns\n";
     }
     {
-        const auto avgTime =
-                benchmark_process<DigitalBiquadFilter<float>>(
-                        N, floatCoefficients);
+        const auto avgTime = benchmark_process<DigitalBiquadFilter<float>>(
+                N, floatCoefficients);
         const auto avgTimeNs =
                 std::chrono::duration_cast<std::chrono::nanoseconds>(avgTime)
                         .count();
         std::cout << "| Process = " << avgTimeNs << " ns\n";
     }
-    for (const int blockSize : blockSizes) {
+    for (const int blockSize: blockSizes) {
         const auto avgTime =
                 benchmark_block_process<DigitalBiquadFilter<float>>(
                         N, blockSize, floatCoefficients);

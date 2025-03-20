@@ -135,6 +135,9 @@ public:
      * in-place.
      * @param count The number of samples in the block
      */
+#if defined(_MSC_VER)
+#pragma warning(suppress : 5045)
+#endif
     void process_block_scalar(T *samples, const size_t count) {
         if (!samples || count <= 0) {
             return;
@@ -152,7 +155,8 @@ public:
      * @param count The number of samples in the block
      */
     void process_block_avx(T *samples, size_t count) {
-        if (!samples) return;
+        if (!samples)
+            return;
         if constexpr (std::is_same_v<T, float>) {
             if (count < 8) {
                 process_block_scalar(samples, count);
@@ -169,11 +173,11 @@ public:
             __m256 y2 = _mm256_set1_ps(m_state.y2);
             for (size_t i = 0; i + 7 < count; i += 8) {
                 const __m256 x0 = _mm256_loadu_ps(samples + i);
-                __m256 y0 = _mm256_add_ps(
-                    _mm256_add_ps(_mm256_mul_ps(b0, x0), _mm256_mul_ps(b1, x1)),
-                    _mm256_mul_ps(b2, x2));
-                y0 = _mm256_sub_ps(y0,
-                      _mm256_add_ps(_mm256_mul_ps(a1, y1), _mm256_mul_ps(a2, y2)));
+                __m256 y0 = _mm256_add_ps(_mm256_add_ps(_mm256_mul_ps(b0, x0),
+                                                        _mm256_mul_ps(b1, x1)),
+                                          _mm256_mul_ps(b2, x2));
+                y0 = _mm256_sub_ps(y0, _mm256_add_ps(_mm256_mul_ps(a1, y1),
+                                                     _mm256_mul_ps(a2, y2)));
                 _mm256_storeu_ps(samples + i, y0);
                 x2 = x1;
                 x1 = x0;
@@ -200,11 +204,11 @@ public:
             __m256d y2 = _mm256_set1_pd(m_state.y2);
             for (size_t i = 0; i + 3 < count; i += 4) {
                 const __m256d x0 = _mm256_loadu_pd(samples + i);
-                __m256d y0 = _mm256_add_pd(
-                    _mm256_add_pd(_mm256_mul_pd(b0, x0), _mm256_mul_pd(b1, x1)),
-                    _mm256_mul_pd(b2, x2));
-                y0 = _mm256_sub_pd(y0,
-                      _mm256_add_pd(_mm256_mul_pd(a1, y1), _mm256_mul_pd(a2, y2)));
+                __m256d y0 = _mm256_add_pd(_mm256_add_pd(_mm256_mul_pd(b0, x0),
+                                                         _mm256_mul_pd(b1, x1)),
+                                           _mm256_mul_pd(b2, x2));
+                y0 = _mm256_sub_pd(y0, _mm256_add_pd(_mm256_mul_pd(a1, y1),
+                                                     _mm256_mul_pd(a2, y2)));
                 _mm256_storeu_pd(samples + i, y0);
                 x2 = x1;
                 x1 = x0;
@@ -218,7 +222,7 @@ public:
         }
     }
 #endif
-    #if defined(__SSE4_1__)
+#if defined(__SSE4_1__)
     /**
      * @brief Process a block of samples using SSE instructions. This method
      * is faster than the scalar version for large blocks of samples.
@@ -227,7 +231,8 @@ public:
      * @param count The number of samples in the block
      */
     void process_block_sse(T *samples, size_t count) {
-        if (!samples) return;
+        if (!samples)
+            return;
         if constexpr (std::is_same_v<T, float>) {
             if (count < 4) {
                 process_block_scalar(samples, count);
@@ -245,10 +250,10 @@ public:
             for (size_t i = 0; i + 3 < count; i += 4) {
                 const __m128 x0 = _mm_loadu_ps(samples + i);
                 __m128 y0 = _mm_add_ps(
-                    _mm_add_ps(_mm_mul_ps(b0, x0), _mm_mul_ps(b1, x1)),
-                    _mm_mul_ps(b2, x2));
-                y0 = _mm_sub_ps(y0,
-                      _mm_add_ps(_mm_mul_ps(a1, y1), _mm_mul_ps(a2, y2)));
+                        _mm_add_ps(_mm_mul_ps(b0, x0), _mm_mul_ps(b1, x1)),
+                        _mm_mul_ps(b2, x2));
+                y0 = _mm_sub_ps(
+                        y0, _mm_add_ps(_mm_mul_ps(a1, y1), _mm_mul_ps(a2, y2)));
                 _mm_storeu_ps(samples + i, y0);
                 x2 = x1;
                 x1 = x0;
@@ -276,10 +281,10 @@ public:
             for (size_t i = 0; i + 1 < count; i += 2) {
                 const __m128d x0 = _mm_loadu_pd(samples + i);
                 __m128d y0 = _mm_add_pd(
-                    _mm_add_pd(_mm_mul_pd(b0, x0), _mm_mul_pd(b1, x1)),
-                    _mm_mul_pd(b2, x2));
-                y0 = _mm_sub_pd(y0,
-                      _mm_add_pd(_mm_mul_pd(a1, y1), _mm_mul_pd(a2, y2)));
+                        _mm_add_pd(_mm_mul_pd(b0, x0), _mm_mul_pd(b1, x1)),
+                        _mm_mul_pd(b2, x2));
+                y0 = _mm_sub_pd(
+                        y0, _mm_add_pd(_mm_mul_pd(a1, y1), _mm_mul_pd(a2, y2)));
                 _mm_storeu_pd(samples + i, y0);
                 x2 = x1;
                 x1 = x0;
@@ -293,7 +298,7 @@ public:
         }
     }
 #endif
-    #if defined(__ARM_NEON)
+#if defined(__ARM_NEON)
     /**
      * @brief Process a block of samples using NEON instructions. This method
      * is faster than the scalar version for large blocks of samples.
@@ -302,7 +307,8 @@ public:
      * @param count The number of samples in the block
      */
     void process_block_neon(T *samples, const size_t count) {
-        if (!samples) return;
+        if (!samples)
+            return;
         if constexpr (std::is_same_v<T, float>) {
             if (count < 4) {
                 process_block_scalar(samples, count);
@@ -319,7 +325,8 @@ public:
             float32x4_t y2 = vdupq_n_f32(m_state.y2);
             for (size_t i = 0; i + 3 < count; i += 4) {
                 const float32x4_t x0 = vld1q_f32(samples + i);
-                float32x4_t y0 = vmlaq_f32(vmlaq_f32(vmulq_f32(b0, x0), b1, x1), b2, x2);
+                float32x4_t y0 =
+                        vmlaq_f32(vmlaq_f32(vmulq_f32(b0, x0), b1, x1), b2, x2);
                 y0 = vsubq_f32(y0, vmlaq_f32(vmulq_f32(a1, y1), a2, y2));
                 vst1q_f32(samples + i, y0);
                 x2 = x1;
@@ -348,7 +355,8 @@ public:
             float64x2_t y2 = vdupq_n_f64(m_state.y2);
             for (size_t i = 0; i + 1 < count; i += 2) {
                 const float64x2_t x0 = vld1q_f64(samples + i);
-                float64x2_t y0 = vmlaq_f64(vmlaq_f64(vmulq_f64(b0, x0), b1, x1), b2, x2);
+                float64x2_t y0 =
+                        vmlaq_f64(vmlaq_f64(vmulq_f64(b0, x0), b1, x1), b2, x2);
                 y0 = vsubq_f64(y0, vmlaq_f64(vmulq_f64(a1, y1), a2, y2));
                 vst1q_f64(samples + i, y0);
                 x2 = x1;
