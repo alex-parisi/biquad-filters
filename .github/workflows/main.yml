@@ -75,12 +75,12 @@ jobs:
           $VCVARS = "$VSINSTALLDIR\VC\Auxiliary\Build\vcvarsall.bat"
           echo "Running vcvarsall.bat"
           
-          # Run vcvarsall.bat to set up the MSVC environment
-          $VCVARS_OUTPUT = cmd.exe /c "call `"$VCVARS`" x64 >nul && set"
+          # Run vcvarsall.bat with /Qspectre- added
+          $VCVARS_OUTPUT = cmd.exe /c "call `"$VCVARS`" x64 >nul && set CXXFLAGS=/Qspectre- && set CFLAGS=/Qspectre- && set"
           
           # Extract required environment variables
           $VCVARS_OUTPUT -split "`r`n" | ForEach-Object {
-              if ($_ -match "^(Path|INCLUDE|LIB|LIBPATH|VCToolsInstallDir|VisualStudioVersion|VSINSTALLDIR)=") {
+              if ($_ -match "^(Path|INCLUDE|LIB|LIBPATH|VCToolsInstallDir|VisualStudioVersion|VSINSTALLDIR|CXXFLAGS|CFLAGS)=") {
                   echo "$_" >> $env:GITHUB_ENV
               }
           }
