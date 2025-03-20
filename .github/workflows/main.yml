@@ -52,23 +52,24 @@ jobs:
         shell: bash
         run: |
           echo "build-output-dir=${{ github.workspace }}/cpp/build" >> "$GITHUB_OUTPUT"
-          
-              # Install GTest on Ubuntu
+
+      # Install GTest on Ubuntu
       - name: Install GTest on Ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtest-dev cmake
+          sudo apt-get install -y libgtest-dev cmake ninja-build
           cd /usr/src/gtest
-          sudo cmake .
-          sudo make
+          sudo cmake -G Ninja .
+          sudo ninja
           sudo cp lib/*.a /usr/lib
 
-        # Install GTest on Windows
-      - name: Install GTest on Windows
+      # Install Ninja & GTest on Windows
+      - name: Install Ninja and GTest on Windows
         if: matrix.os == 'windows-latest'
         shell: pwsh
         run: |
+          choco install ninja --yes
           git clone https://github.com/microsoft/vcpkg.git
           cd vcpkg
           .\bootstrap-vcpkg.bat
