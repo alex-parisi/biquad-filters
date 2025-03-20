@@ -24,6 +24,8 @@ SOFTWARE.
 
 #include <chrono>
 #include <iostream>
+#include <vector>
+#include <array>
 
 #include "DigitalBiquadFilter.h"
 
