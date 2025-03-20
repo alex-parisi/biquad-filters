@@ -8,6 +8,10 @@ enable_testing()
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
+if (MSVC)
+    add_compile_options(/Qspectre-)
+endif()
+
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     find_program(CLANG_TIDY_EXE NAMES "clang-tidy" REQUIRED)
     set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "-checks=-*,modernize-*")

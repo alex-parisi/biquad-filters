@@ -6,7 +6,7 @@ future.
 
 ---
 
-- [C++](cpp/)
+- [C++](cpp/) [ ✅ _CLang_, ✅ _GCC_, ✅ _MSVC_ ]
 - [Rust](rust/)
 
 ---
