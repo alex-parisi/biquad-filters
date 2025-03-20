@@ -1,6 +1,9 @@
 /// DigitalBiquadFilterTest.cpp
 
 #include <gtest/gtest.h>
+#include <array>
+#include <vector>
+#include <optional>
 
 #include "DigitalBiquadFilter.h"
 
