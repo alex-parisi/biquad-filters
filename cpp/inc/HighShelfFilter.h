@@ -52,8 +52,10 @@ public:
      * @param gain The gain of the filter in decibels, default value is 6.0
      * @return A high shelf filter object
      */
-    static auto create(T cutoff, int sampleRate, T qFactor = 0.7071067811865476,
-                       T gain = 6.0) -> std::optional<HighShelfFilter> {
+    static auto create(T cutoff, int sampleRate,
+                       T qFactor = static_cast<T>(0.7071067811865476),
+                       T gain = static_cast<T>(6.0))
+            -> std::optional<HighShelfFilter> {
         if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
             return std::nullopt;
         }
@@ -89,18 +91,22 @@ private:
      * frequency, sample rate, and quality factor
      */
     Coefficients<T> calculate_coefficients() override {
-        const T w0 = 2.0 * M_PI * this->m_cutoff / this->m_sampleRate;
+        const T w0 = static_cast<T>(2.0 * M_PI * this->m_cutoff /
+                                    this->m_sampleRate);
         const T cos_w0 = std::cos(w0);
-        const T alpha = std::sin(w0) / (2.0 * this->m_qFactor);
-        const T A = std::pow(10.0, this->m_gain / 40.0);
-        const T b0 =
-                A * (A + 1.0 + (A - 1.0) * cos_w0 + 2.0 * std::sqrt(A) * alpha);
-        const T b1 = -2.0 * A * (A - 1.0 + (A + 1.0) * cos_w0);
-        const T b2 =
-                A * (A + 1.0 + (A - 1.0) * cos_w0 - 2.0 * std::sqrt(A) * alpha);
-        const T a0 = A + 1.0 - (A - 1.0) * cos_w0 + 2.0 * std::sqrt(A) * alpha;
-        const T a1 = 2.0 * (A - 1.0 - (A + 1.0) * cos_w0);
-        const T a2 = A + 1.0 - (A - 1.0) * cos_w0 - 2.0 * std::sqrt(A) * alpha;
+        const T alpha = std::sin(w0) / static_cast<T>(2.0 * this->m_qFactor);
+        const T A = std::pow(static_cast<T>(10.0),
+                             this->m_gain / static_cast<T>(40.0));
+        const T b0 = static_cast<T>(A * (A + 1.0 + (A - 1.0) * cos_w0 +
+                                         2.0 * std::sqrt(A) * alpha));
+        const T b1 = static_cast<T>(-2.0 * A * (A - 1.0 + (A + 1.0) * cos_w0));
+        const T b2 = static_cast<T>(A * (A + 1.0 + (A - 1.0) * cos_w0 -
+                                         2.0 * std::sqrt(A) * alpha));
+        const T a0 = static_cast<T>(A + 1.0 - (A - 1.0) * cos_w0 +
+                                    2.0 * std::sqrt(A) * alpha);
+        const T a1 = static_cast<T>(2.0 * (A - 1.0 - (A + 1.0) * cos_w0));
+        const T a2 = static_cast<T>(A + 1.0 - (A - 1.0) * cos_w0 -
+                                    2.0 * std::sqrt(A) * alpha);
         return Coefficients{b0, b1, b2, a0, a1, a2};
     }
 };

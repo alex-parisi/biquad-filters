@@ -51,7 +51,8 @@ public:
      * @param constantSkirtGain Whether to use a constant skirt gain or not
      * @return A band pass filter object
      */
-    static auto create(T cutoff, int sampleRate, T qFactor = 0.7071067811865476,
+    static auto create(T cutoff, int sampleRate,
+                       T qFactor = static_cast<T>(0.7071067811865476),
                        bool constantSkirtGain = false)
             -> std::optional<BandPassFilter> {
         if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
@@ -90,22 +91,23 @@ private:
      * frequency, sample rate, and quality factor
      */
     Coefficients<T> calculate_coefficients() override {
-        const T w0 = 2.0 * M_PI * this->m_cutoff / this->m_sampleRate;
+        const T w0 = static_cast<T>(2.0 * M_PI * this->m_cutoff /
+                                    this->m_sampleRate);
         const T cos_w0 = std::cos(w0);
-        const T alpha = std::sin(w0) / (2.0 * this->m_qFactor);
+        const T alpha = std::sin(w0) / (static_cast<T>(2.0) * this->m_qFactor);
         T b0, b1, b2;
         if (this->m_constantSkirtGain) {
             b0 = this->m_qFactor * alpha;
-            b1 = 0;
+            b1 = static_cast<T>(0.0);
             b2 = -this->m_qFactor * alpha;
         } else {
             b0 = alpha;
-            b1 = 0;
+            b1 = static_cast<T>(0.0);
             b2 = -alpha;
         }
-        const T a0 = 1.0 + alpha;
-        const T a1 = -2.0 * cos_w0;
-        const T a2 = 1.0 - alpha;
+        const T a0 = static_cast<T>(1.0) + alpha;
+        const T a1 = static_cast<T>(-2.0) * cos_w0;
+        const T a2 = static_cast<T>(1.0) - alpha;
         return Coefficients{b0, b1, b2, a0, a1, a2};
     }
 };

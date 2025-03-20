@@ -50,7 +50,8 @@ public:
      * 0.7071067811865476, or 1/sqrt(2)
      * @return A low pass filter object
      */
-    static auto create(T cutoff, int sampleRate, T qFactor = 0.7071067811865476)
+    static auto create(T cutoff, int sampleRate,
+                       T qFactor = static_cast<T>(0.7071067811865476))
             -> std::optional<LowPassFilter> {
         if (!FilterObject<T>::verify_parameters(cutoff, sampleRate, qFactor)) {
             return std::nullopt;
@@ -83,15 +84,16 @@ private:
      * frequency, sample rate, and quality factor
      */
     Coefficients<T> calculate_coefficients() override {
-        const T w0 = 2.0 * M_PI * this->m_cutoff / this->m_sampleRate;
+        const T w0 = static_cast<T>(2.0 * M_PI * this->m_cutoff /
+                                    this->m_sampleRate);
         const T cos_w0 = std::cos(w0);
-        const T alpha = std::sin(w0) / (2.0 * this->m_qFactor);
-        const T b1 = 1.0 - cos_w0;
-        const T b0 = b1 / 2.0;
+        const T alpha = std::sin(w0) / (static_cast<T>(2.0) * this->m_qFactor);
+        const T b1 = static_cast<T>(1.0) - cos_w0;
+        const T b0 = b1 / static_cast<T>(2.0);
         const T b2 = b0;
-        const T a0 = 1.0 + alpha;
-        const T a1 = -2.0 * cos_w0;
-        const T a2 = 1.0 - alpha;
+        const T a0 = static_cast<T>(1.0) + alpha;
+        const T a1 = static_cast<T>(-2.0) * cos_w0;
+        const T a2 = static_cast<T>(1.0) - alpha;
         return Coefficients{b0, b1, b2, a0, a1, a2};
     }
 };

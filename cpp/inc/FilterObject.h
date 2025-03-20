@@ -25,9 +25,9 @@ SOFTWARE.
 #ifndef FILTER_OBJECT_H
 #define FILTER_OBJECT_H
 
+#include <cmath>
 #include <cstddef>
 #include <optional>
-#include <cmath>
 
 #include "DigitalBiquadFilter.h"
 
@@ -83,7 +83,7 @@ public:
      * otherwise
      */
     virtual auto set_cutoff(const T cutoff) -> bool {
-        if (cutoff <= 0) {
+        if (cutoff <= static_cast<T>(0.0)) {
             return false;
         }
         m_cutoff = cutoff;
@@ -129,7 +129,7 @@ public:
      * @return True if the quality factor was set successfully, false otherwise
      */
     virtual auto set_q_factor(const T qFactor) -> bool {
-        if (qFactor <= 0) {
+        if (qFactor <= static_cast<T>(0.0)) {
             return false;
         }
         m_qFactor = qFactor;
@@ -151,11 +151,11 @@ public:
      * @return True if the bandwidth was set successfully, false otherwise
      */
     virtual auto set_bandwidth(const T bandwidth) -> bool {
-        if (bandwidth <= 0) {
+        if (bandwidth <= static_cast<T>(0.0)) {
             return false;
         }
-        const double Q =
-                1.0 / (2.0 * std::sinh(bandwidth * std::log10(2.0) / 2.0));
+        const T Q = static_cast<T>(
+                1.0 / (2.0 * std::sinh(bandwidth * std::log10(2.0) / 2.0)));
         return set_q_factor(Q);
     }
     /**
@@ -163,8 +163,8 @@ public:
      * @return The bandwidth of the filter
      */
     [[nodiscard]] virtual auto get_bandwidth() const -> T {
-        const double bandwidth =
-                2.0 * std::asinh(1.0 / (2.0 * m_qFactor)) / std::log10(2.0);
+        const T bandwidth = static_cast<T>(
+                2.0 * std::asinh(1.0 / (2.0 * m_qFactor)) / std::log10(2.0));
         return bandwidth;
     }
     /**
@@ -233,10 +233,10 @@ protected:
      * @param qFactor The quality factor of the filter
      * @return
      */
-    static auto verify_parameters(const double cutoff, const int sampleRate,
-                                  const double qFactor) -> bool {
-        if (sampleRate <= 0 || cutoff <= 0.0 || qFactor <= 0.0 ||
-            cutoff > sampleRate / 2.0) {
+    static auto verify_parameters(const T cutoff, const int sampleRate,
+                                  const T qFactor) -> bool {
+        if (sampleRate <= 0 || cutoff <= static_cast<T>(0.0) ||
+            qFactor <= static_cast<T>(0.0) || cutoff > sampleRate / 2.0) {
             return false;
         }
         return true;
@@ -244,13 +244,13 @@ protected:
     /** The underlying digital biquad filter */
     std::optional<DigitalBiquadFilter<T>> m_filter = std::nullopt;
     /** The cutoff frequency of the filter */
-    T m_cutoff = 0.0;
+    T m_cutoff = static_cast<T>(0.0);
     /** The sample rate of the input signal */
     int m_sampleRate = 0;
     /** The quality factor of the filter */
-    T m_qFactor = 0.0;
+    T m_qFactor = static_cast<T>(0.0);
     /** The gain of the filter */
-    T m_gain = 0.0;
+    T m_gain = static_cast<T>(0.0);
     /** Whether to use a constant skirt gain or not */
     bool m_constantSkirtGain = false;
     /** Bypass */
