@@ -9,7 +9,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 if (MSVC)
-    add_compile_options(/Qspectre-)
+    add_compile_options(/Qspectre- /wd5045)
 endif()
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
