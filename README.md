@@ -6,7 +6,9 @@ future.
 
 ---
 
-- [C++](cpp/) [ ✅ _CLang_, ✅ _GCC_, ✅ _MSVC_ ]
+- [C++](cpp/)
+    - **Compiler Support**: *CLang*, *GCC*, *MSVC*
+    - **SIMD Support**: *AVX*, *SSE*, *NEON*
 - [Rust](rust/)
 
 ---

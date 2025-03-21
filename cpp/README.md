@@ -18,8 +18,8 @@ website [here](https://atparisi.com/html/digitalBiquadFilter.html).
 
 ### Usage:
 
-To use the filters, simply include the header files in your project and create
-an instance of the filter. 
+To use the filters, simply download the latest release here, include the 
+header files in your project, and create an instance of the filter. 
 
 Here is an example of how to use a filter:
 

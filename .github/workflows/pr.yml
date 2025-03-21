@@ -1,9 +1,10 @@
-name: Release
+name: PR-Check
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   build:
@@ -99,49 +100,3 @@ jobs:
       - name: Test
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure --verbose
-  release:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Ensure tag is on main
-        run: |
-          TAG_COMMIT=$(git rev-parse ${{ github.ref_name }})
-          MAIN_COMMIT=$(git rev-parse origin/main)
-          
-          echo "Tag points to:     $TAG_COMMIT"
-          echo "Main branch head:  $MAIN_COMMIT"
-          
-          if [ "$TAG_COMMIT" != "$MAIN_COMMIT" ]; then
-            echo "❌ Tag does not point to the latest commit on main. Aborting release."
-            exit 1
-          fi
-
-      - name: Write version to file
-        run: echo "${{ github.ref_name }}" > VERSION.txt
-
-      - name: Create release archive
-        run: |
-          mkdir -p biquad_filters
-          cp VERSION.txt biquad_filters/
-          cp -r cpp/inc biquad_filters/
-          cp LICENSE biquad_filters/
-          cd biquad_filters
-          zip -r ../biquad_filters.zip .
-
-      - name: Upload Release to GitHub
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload Asset
-        uses: softprops/action-gh-release@v1
-        with:
-          files: biquad_filters.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
