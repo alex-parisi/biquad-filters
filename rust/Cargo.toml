@@ -2,6 +2,10 @@
 name = "biquad-filters-rust"
 version = "0.1.0"
 edition = "2024"
+authors = ["Alex Parisi <alex@atparisi.com>"]
+description = "A digital biquad filter implementation"
+license = "MIT"
+repository = "https://github.com/alex-parisi/biquad-filters"
 
 [dependencies]
 num-traits = "0.2"

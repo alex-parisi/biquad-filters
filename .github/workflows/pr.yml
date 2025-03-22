@@ -7,7 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  cpp-build:
+    if: github.event.pull_request.paths_any == 'cpp/**'
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -100,3 +101,19 @@ jobs:
       - name: Test
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure --verbose
+
+  rust-build:
+    if: github.event.pull_request.paths_any == 'rust/**'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: rust
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+
+      - name: Test Rust implementation
+        run: |
+          cargo test
