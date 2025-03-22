@@ -10,6 +10,7 @@ future.
     - **Compiler Support**: *CLang*, *GCC*, *MSVC*
     - **SIMD Support**: *AVX*, *SSE*, *NEON*
 - [Rust](rust/)
+    - Available on *Crates.io* [here](https://crates.io/crates/biquad-filters-rust)
 
 ---
 
