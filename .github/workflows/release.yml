@@ -58,7 +58,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   rust-release:
-    if: github.event.pull_request.paths_any == 'rust/**'
     runs-on: ubuntu-latest
     defaults:
       run:
