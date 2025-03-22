@@ -18,7 +18,7 @@ website [here](https://atparisi.com/html/digitalBiquadFilter.html).
 
 ### Usage:
 
-To use the filters, simply download the latest release here, include the 
+To use the filters, simply download `cpp_biquad_filters.zip` from the latest release [here](https://github.com/alex-parisi/biquad-filters/releases/latest), include the 
 header files in your project, and create an instance of the filter. 
 
 Here is an example of how to use a filter:
