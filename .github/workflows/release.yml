@@ -77,7 +77,10 @@ jobs:
           sed -i.bak -E "s/^version = \".*\"/version = \"${{ steps.version.outputs.version }}\"/" Cargo.toml
           cat Cargo.toml
 
+      - name: Clean up backup file
+        run: rm -f Cargo.toml.bak
+
       - name: Publish to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-        run: cargo publish
+        run: cargo publish --allow-dirty
