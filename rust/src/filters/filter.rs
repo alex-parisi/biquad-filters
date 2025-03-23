@@ -1,4 +1,4 @@
-/// mod.rs
+/// filter.rs
 
 /**
 Copyright © 2025 Alex Parisi
@@ -21,7 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-pub mod biquad;
-pub mod filter;
-pub mod filter_configuration;
-pub mod high_pass;
+use num_traits::Float;
+use crate::filters::filter_configuration::FilterConfiguration;
+
+/// A Generic Filter trait for processing audio samples.
+pub trait Filter<T: Float> {
+    /// Processes a single sample in-place and returns a boolean indicating success.
+    fn process(&mut self, sample: &mut T) -> bool;
+    /// Processes a block of samples in-place and returns a boolean indicating success.
+    fn process_block(&mut self, samples: &mut [T]) -> bool;
+    /// Returns the current configuration of the filter.
+    fn get_configuration(&self) -> FilterConfiguration<T>;
+    /// Sets the configuration of the filter.
+    fn set_configuration(&mut self, configuration: FilterConfiguration<T>) -> bool;
+}

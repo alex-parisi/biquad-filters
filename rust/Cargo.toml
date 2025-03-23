@@ -9,6 +9,7 @@ repository = "https://github.com/alex-parisi/biquad-filters"
 
 [dependencies]
 num-traits = "0.2"
+approx = "0.5.1"
 
 [lib]
 name = "biquad_filters"

@@ -72,7 +72,7 @@ where
     }
 
     /// Processes a single sample.
-    pub fn process(&mut self, sample: &mut T) {
+    pub fn process(&mut self, sample: &mut T) -> bool {
         let output = self.coefficients.b0 * *sample
             + self.coefficients.b1 * self.state.x1
             + self.coefficients.b2 * self.state.x2
@@ -86,6 +86,7 @@ where
         *sample = output;
 
         self.iter += 1;
+        true
     }
 
     /// Processes a block of samples.
