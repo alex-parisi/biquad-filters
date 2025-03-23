@@ -141,6 +141,6 @@ profiler just measures the performance of the `DigitalBiquadFilter` class.
 ### Notes:
 
 - It's always recommended to template the filters as `double` for the best
-  precision to and reduce the chance of encountering quantization noise. While
+  precision and to reduce the chance of encountering quantization noise. While
   processing blocks of `float` samples will be faster, the precision of the
   filter will be reduced.
