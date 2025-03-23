@@ -82,17 +82,22 @@ impl<T: Float + Default + Copy + std::ops::MulAssign> HighPassFilter<T> {
 
 /// Implementing the Filter trait for HighPassFilter.
 impl<T: Float + Default + Copy + std::ops::MulAssign> Filter<T> for HighPassFilter<T> {
+    /// Processes a single sample in-place and returns a boolean indicating success.
     fn process(&mut self, sample: &mut T) -> bool {
         self.filter.process(sample)
     }
+
+    /// Processes a block of samples in-place and returns a boolean indicating success.
     fn process_block(&mut self, samples: &mut [T]) -> bool {
         self.filter.process_block(samples)
     }
 
+    /// Returns the current configuration of the filter.
     fn get_configuration(&self) -> FilterConfiguration<T> {
         self.config.clone()
     }
 
+    /// Sets the configuration of the filter and recalculates the coefficients.
     fn set_configuration(&mut self, configuration: FilterConfiguration<T>) -> bool {
         self.config = configuration;
         let coefficients = Self::calculate_coefficients(self.config.get_cutoff(), self.config.get_sample_rate(), self.config.get_q_factor());
