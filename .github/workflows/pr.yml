@@ -132,6 +132,9 @@ jobs:
 
       - name: Set up Rust
         uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          cache-workspaces: |
+            rust
 
       - name: Test Rust implementation
         run: |
