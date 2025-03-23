@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 use num_traits::Float;
+use std::ops::MulAssign;
 
 
 /// Coefficients struct for the digital biquad filter.
@@ -54,27 +55,29 @@ pub struct DigitalBiquadFilter<T: Float + Default> {
 
 impl<T> DigitalBiquadFilter<T>
 where
-    T: Float + Default,
+    T: Float + Default + MulAssign + Copy,
 {
     /// Creates a new filter instance with the given coefficients.
     pub fn new(coefficients: Coefficients<T>) -> Option<Self> {
         if coefficients.a0.is_zero() {
             return None;
         }
-        Some(Self {
+        let mut filter = Self {
             coefficients,
             state: State::default(),
             iter: 0,
-        })
+        };
+        filter.normalize_coefficients();
+        Some(filter)
     }
 
     /// Processes a single sample.
     pub fn process(&mut self, sample: &mut T) {
-        let output = (self.coefficients.b0 / self.coefficients.a0) * *sample
-            + (self.coefficients.b1 / self.coefficients.a0) * self.state.x1
-            + (self.coefficients.b2 / self.coefficients.a0) * self.state.x2
-            - (self.coefficients.a1 / self.coefficients.a0) * self.state.y1
-            - (self.coefficients.a2 / self.coefficients.a0) * self.state.y2;
+        let output = self.coefficients.b0 * *sample
+            + self.coefficients.b1 * self.state.x1
+            + self.coefficients.b2 * self.state.x2
+            - self.coefficients.a1 * self.state.y1
+            - self.coefficients.a2 * self.state.y2;
 
         self.state.x2 = self.state.x1;
         self.state.x1 = *sample;
@@ -102,6 +105,7 @@ where
             return false;
         }
         self.coefficients = coefficients;
+        self.normalize_coefficients();
         self.reset();
         true
     }
@@ -109,7 +113,18 @@ where
     /// Resets the filter state.
     pub fn reset(&mut self) {
         self.state = State::default();
-        self.iter = 0;
+        self.iter = u64::default();
+    }
+
+    /// Normalizes the coefficients by dividing all by a0.
+    fn normalize_coefficients(&mut self) {
+        let a0_inv = T::one() / self.coefficients.a0;
+        self.coefficients.b0 *= a0_inv;
+        self.coefficients.b1 *= a0_inv;
+        self.coefficients.b2 *= a0_inv;
+        self.coefficients.a1 *= a0_inv;
+        self.coefficients.a2 *= a0_inv;
+        self.coefficients.a0 = T::one();
     }
 }
 
