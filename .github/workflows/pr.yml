@@ -7,8 +7,24 @@ on:
     branches: [ "main" ]
 
 jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      rust: ${{ steps.filter.outputs.rust }}
+      cpp: ${{ steps.filter.outputs.cpp }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for file changes
+        id: filter
+        run: |
+          echo "Checking changes..."
+          echo "rust=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '^rust/' || true)" >> "$GITHUB_OUTPUT"
+          echo "cpp=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '^cpp/' || true)" >> "$GITHUB_OUTPUT"
+
   cpp-build:
-    if: github.event.pull_request.paths_any == 'cpp/**'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.cpp != ''
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -103,7 +119,8 @@ jobs:
         run: ctest --build-config ${{ matrix.build_type }} --output-on-failure --verbose
 
   rust-build:
-    if: github.event.pull_request.paths_any == 'rust/**'
+    needs: detect-changes
+    if: needs.detect-changes.outputs.rust != ''
     runs-on: ubuntu-latest
     defaults:
       run:
