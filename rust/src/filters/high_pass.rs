@@ -28,8 +28,11 @@ use num_traits::Float;
 use std::f64::consts::PI;
 
 /// High-pass filter implementation using a digital biquad filter.
+#[derive(Debug, Clone)]
 pub struct HighPassFilter<T: Float + Default + Copy> {
+    /// The digital biquad filter used for processing.
     filter: DigitalBiquadFilter<T>,
+    /// The configuration for the filter, including cutoff frequency, sample rate, and Q factor.
     config: FilterConfiguration<T>,
 }
 

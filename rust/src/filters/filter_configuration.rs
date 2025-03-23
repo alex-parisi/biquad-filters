@@ -26,7 +26,7 @@ use num_traits::Float;
 
 /// Configuration for a filter.
 #[derive(Debug, Clone, Copy)]
-pub struct FilterConfiguration<T: Float> {
+pub struct FilterConfiguration<T: Float + Default> {
     cutoff: T,
     sample_rate: u32,
     q_factor: T,
@@ -98,5 +98,18 @@ where
     /// Sets whether the filter should maintain a constant skirt gain.
     pub fn set_constant_skirt_gain(&mut self, value: bool) {
         self.constant_skirt_gain = value;
+    }
+}
+
+/// Implementing Default for FilterConfiguration.
+impl<T: Float + Default> Default for FilterConfiguration<T> {
+    fn default() -> Self {
+        Self {
+            cutoff: T::zero(),
+            sample_rate: u32::default(),
+            q_factor: T::zero(),
+            gain: T::zero(),
+            constant_skirt_gain: bool::default(),
+        }
     }
 }

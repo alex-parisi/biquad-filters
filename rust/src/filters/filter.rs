@@ -25,7 +25,7 @@ use num_traits::Float;
 use crate::filters::filter_configuration::FilterConfiguration;
 
 /// A Generic Filter trait for processing audio samples.
-pub trait Filter<T: Float> {
+pub trait Filter<T: Float + Default> {
     /// Processes a single sample in-place and returns a boolean indicating success.
     fn process(&mut self, sample: &mut T) -> bool;
     /// Processes a block of samples in-place and returns a boolean indicating success.
