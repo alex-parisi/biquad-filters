@@ -10,21 +10,23 @@ jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      rust: ${{ steps.filter.outputs.rust }}
-      cpp: ${{ steps.filter.outputs.cpp }}
+      rust: ${{ steps.changes.outputs.rust }}
+      cpp: ${{ steps.changes.outputs.cpp }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Check for file changes
-        id: filter
-        run: |
-          echo "Checking changes..."
-          echo "rust=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '^rust/' || true)" >> "$GITHUB_OUTPUT"
-          echo "cpp=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '^cpp/' || true)" >> "$GITHUB_OUTPUT"
+      - name: Check paths
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            rust:
+              - 'rust/**'
+            cpp:
+              - 'cpp/**'
 
   cpp-build:
     needs: detect-changes
-    if: needs.detect-changes.outputs.cpp != ''
+    if: needs.detect-changes.outputs.cpp == 'true'
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -120,7 +122,7 @@ jobs:
 
   rust-build:
     needs: detect-changes
-    if: needs.detect-changes.outputs.rust != ''
+    if: needs.detect-changes.outputs.rust == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
