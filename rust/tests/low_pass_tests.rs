@@ -23,72 +23,55 @@ SOFTWARE.
 */
 use biquad_filters::filters::filter::Filter;
 use biquad_filters::filters::low_pass::LowPassFilter;
-use biquad_filters::filters::filter_configuration::FilterConfiguration;
 use approx::assert_relative_eq;
-
 
 #[test]
 fn create_valid_double_filter() {
-    let config = FilterConfiguration::<f64>::new(
+    let filter = LowPassFilter::<f64>::new(
         1000.0_f64,
         44100_u32,
-        std::f64::consts::FRAC_1_SQRT_2,
-        0.0_f64,
-        false
+        std::f64::consts::FRAC_1_SQRT_2
     );
-    let filter = LowPassFilter::<f64>::new(config);
     assert!(filter.is_some());
 }
 
 #[test]
 fn create_valid_float_filter() {
-    let config = FilterConfiguration::<f32>::new(
+    let filter = LowPassFilter::<f32>::new(
         1000.0_f32,
         44100_u32,
-        std::f32::consts::FRAC_1_SQRT_2,
-        0.0_f32,
-        false
+        std::f32::consts::FRAC_1_SQRT_2
     );
-    let filter = LowPassFilter::<f32>::new(config);
     assert!(filter.is_some());
 }
 
 #[test]
 fn create_invalid_double_filter() {
-    let config = FilterConfiguration::<f64>::new(
+    let filter = LowPassFilter::<f64>::new(
         1000.0_f64,
         0_u32,
-        std::f64::consts::FRAC_1_SQRT_2,
-        0.0_f64,
-        false
+        std::f64::consts::FRAC_1_SQRT_2
     );
-    let filter = LowPassFilter::<f64>::new(config);
     assert!(filter.is_none());
 }
 
 #[test]
 fn create_invalid_float_filter() {
-    let config = FilterConfiguration::<f32>::new(
+    let filter = LowPassFilter::<f32>::new(
         1000.0_f32,
         0_u32,
-        std::f32::consts::FRAC_1_SQRT_2,
-        0.0_f32,
-        false
+        std::f32::consts::FRAC_1_SQRT_2
     );
-    let filter = LowPassFilter::<f32>::new(config);
     assert!(filter.is_none());
 }
 
 #[test]
 fn set_cutoff_frequency() {
-    let config = FilterConfiguration::<f64>::new(
+    let mut filter = LowPassFilter::<f64>::new(
         1000.0_f64,
         44100_u32,
-        std::f64::consts::FRAC_1_SQRT_2,
-        0.0_f64,
-        false
-    );
-    let mut filter = LowPassFilter::<f64>::new(config).unwrap();
+        std::f64::consts::FRAC_1_SQRT_2
+    ).unwrap();
     let mut config = filter.get_configuration();
     assert_relative_eq!(config.get_cutoff(), 1000.0_f64);
     config.set_cutoff(2000.0_f64);
@@ -99,14 +82,11 @@ fn set_cutoff_frequency() {
 
 #[test]
 fn set_sample_rate() {
-    let config = FilterConfiguration::<f64>::new(
+    let mut filter = LowPassFilter::<f64>::new(
         1000.0_f64,
         44100_u32,
-        std::f64::consts::FRAC_1_SQRT_2,
-        0.0_f64,
-        false
-    );
-    let mut filter = LowPassFilter::<f64>::new(config).unwrap();
+        std::f64::consts::FRAC_1_SQRT_2
+    ).unwrap();
     let mut config = filter.get_configuration();
     assert_eq!(config.get_sample_rate(), 44100_u32);
     config.set_sample_rate(48000_u32);
@@ -117,14 +97,11 @@ fn set_sample_rate() {
 
 #[test]
 fn set_quality_factor() {
-    let config = FilterConfiguration::<f64>::new(
+    let mut filter = LowPassFilter::<f64>::new(
         1000.0_f64,
         44100_u32,
-        std::f64::consts::FRAC_1_SQRT_2,
-        0.0_f64,
-        false
-    );
-    let mut filter = LowPassFilter::<f64>::new(config).unwrap();
+        std::f64::consts::FRAC_1_SQRT_2
+    ).unwrap();
     let mut config = filter.get_configuration();
     assert_relative_eq!(config.get_q_factor(), std::f64::consts::FRAC_1_SQRT_2);
     config.set_q_factor(1.0_f64);

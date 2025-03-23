@@ -34,4 +34,24 @@ pub trait Filter<T: Float + Default> {
     fn get_configuration(&self) -> FilterConfiguration<T>;
     /// Sets the configuration of the filter.
     fn set_configuration(&mut self, configuration: FilterConfiguration<T>) -> bool;
+    /// Returns the cutoff frequency of the filter.
+    fn get_cutoff(&self) -> T;
+    /// Sets the cutoff frequency of the filter.
+    fn set_cutoff(&mut self, cutoff: T) -> bool;
+    /// Returns the sample rate of the filter.
+    fn get_sample_rate(&self) -> u32;
+    /// Sets the sample rate of the filter.
+    fn set_sample_rate(&mut self, sample_rate: u32) -> bool;
+    /// Returns the Q factor of the filter.
+    fn get_q_factor(&self) -> T;
+    /// Sets the Q factor of the filter.
+    fn set_q_factor(&mut self, q_factor: T) -> bool;
+    /// Returns the gain of the filter.
+    fn get_gain(&self) -> T;
+    /// Sets the gain of the filter.
+    fn set_gain(&mut self, gain: T) -> bool;
+    /// Returns whether the filter has a constant skirt gain.
+    fn get_constant_skirt_gain(&self) -> bool;
+    /// Sets whether the filter should have a constant skirt gain.
+    fn set_constant_skirt_gain(&mut self, constant_skirt_gain: bool) -> bool;
 }
