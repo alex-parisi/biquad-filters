@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 use crate::filters::biquad::{Coefficients, DigitalBiquadFilter};
-use crate::filters::filter::Filter;
+use crate::filters::filter::BiquadFilterWrapper;
 use crate::filters::filter_configuration::FilterConfiguration;
 use num_traits::Float;
 use std::f64::consts::PI;
@@ -39,27 +39,38 @@ pub struct HighPassFilter<T: Float + Default + Copy> {
 impl<T: Float + Default + Copy + std::ops::MulAssign> HighPassFilter<T> {
     /// Creates a new high-pass filter with the given cutoff frequency, sample rate, and Q factor.
     pub fn new(cutoff: T, sample_rate: u32, q_factor: T) -> Option<Self> {
-        let coefficients = Self::calculate_coefficients(cutoff, sample_rate, q_factor);
-        if coefficients.is_none() {
-            return None;
-        }
-        let filter = DigitalBiquadFilter::new(coefficients?)?;
         let config = FilterConfiguration::new(cutoff, sample_rate, q_factor, T::zero(), false);
-        Some(Self {
-            filter,
-            config
-        })
+        let coefficients = Self::calculate_coefficients(&config)?;
+        let filter = DigitalBiquadFilter::new(coefficients)?;
+        Some(Self { filter, config })
+    }
+}
+
+/// Provide internal access and coefficient logic via BiquadFilterWrapper.
+impl<T: Float + Default + Copy + std::ops::MulAssign> BiquadFilterWrapper<T> for HighPassFilter<T> {
+    fn get_filter(&mut self) -> &mut DigitalBiquadFilter<T> {
+        &mut self.filter
     }
 
-    /// Calculates the coefficients for the high-pass filter based on the cutoff frequency, sample
-    /// rate, and Q factor.
-    fn calculate_coefficients(cutoff: T, sample_rate: u32, q: T) -> Option<Coefficients<T>> {
-        if cutoff <= T::zero() || sample_rate <= u32::default() || q <= T::zero() {
+    fn get_config(&self) -> &FilterConfiguration<T> {
+        &self.config
+    }
+
+    fn get_config_mut(&mut self) -> &mut FilterConfiguration<T> {
+        &mut self.config
+    }
+
+    fn calculate_coefficients(config: &FilterConfiguration<T>) -> Option<Coefficients<T>> {
+        let cutoff = config.get_cutoff();
+        let sample_rate = config.get_sample_rate();
+        let q = config.get_q_factor();
+
+        if cutoff <= T::zero() || sample_rate == 0 || q <= T::zero() {
             return None;
         }
 
-        let two = T::from(2.0).unwrap();
-        let pi = T::from(PI).unwrap();
+        let two = T::from(2.0)?;
+        let pi = T::from(PI)?;
         let one = T::one();
 
         let w0 = two * pi * cutoff / T::from(sample_rate)?;
@@ -82,98 +93,5 @@ impl<T: Float + Default + Copy + std::ops::MulAssign> HighPassFilter<T> {
             a1,
             a2,
         })
-    }
-}
-
-/// Implementing the Filter trait for HighPassFilter.
-impl<T: Float + Default + Copy + std::ops::MulAssign> Filter<T> for HighPassFilter<T> {
-    /// Processes a single sample in-place and returns a boolean indicating success.
-    fn process(&mut self, sample: &mut T) -> bool {
-        self.filter.process(sample)
-    }
-
-    /// Processes a block of samples in-place and returns a boolean indicating success.
-    fn process_block(&mut self, samples: &mut [T]) -> bool {
-        self.filter.process_block(samples)
-    }
-
-    /// Returns the current configuration of the filter.
-    fn get_configuration(&self) -> FilterConfiguration<T> {
-        self.config.clone()
-    }
-
-    /// Sets the configuration of the filter and recalculates the coefficients.
-    fn set_configuration(&mut self, configuration: FilterConfiguration<T>) -> bool {
-        self.config = configuration;
-        let coefficients = Self::calculate_coefficients(self.config.get_cutoff(), self.config.get_sample_rate(), self.config.get_q_factor());
-        if coefficients.is_none() {
-            return false;
-        }
-        self.filter.set_coefficients(coefficients.unwrap())
-    }
-
-    /// Returns the cutoff frequency of the filter.
-    fn get_cutoff(&self) -> T {
-        self.config.get_cutoff()
-    }
-
-    /// Sets the cutoff frequency of the filter.
-    fn set_cutoff(&mut self, cutoff: T) -> bool {
-        self.config.set_cutoff(cutoff);
-        let coefficients = Self::calculate_coefficients(self.config.get_cutoff(), self.config.get_sample_rate(), self.config.get_q_factor());
-        if coefficients.is_none() {
-            return false;
-        }
-        self.filter.set_coefficients(coefficients.unwrap())
-    }
-
-    /// Returns the sample rate of the filter.
-    fn get_sample_rate(&self) -> u32 {
-        self.config.get_sample_rate()
-    }
-
-    /// Sets the sample rate of the filter.
-    fn set_sample_rate(&mut self, sample_rate: u32) -> bool {
-        self.config.set_sample_rate(sample_rate);
-        let coefficients = Self::calculate_coefficients(self.config.get_cutoff(), self.config.get_sample_rate(), self.config.get_q_factor());
-        if coefficients.is_none() {
-            return false;
-        }
-        self.filter.set_coefficients(coefficients.unwrap())
-    }
-
-    /// Returns the Q factor of the filter.
-    fn get_q_factor(&self) -> T {
-        self.config.get_q_factor()
-    }
-
-    /// Sets the Q factor of the filter.
-    fn set_q_factor(&mut self, q_factor: T) -> bool {
-        self.config.set_q_factor(q_factor);
-        let coefficients = Self::calculate_coefficients(self.config.get_cutoff(), self.config.get_sample_rate(), self.config.get_q_factor());
-        if coefficients.is_none() {
-            return false;
-        }
-        self.filter.set_coefficients(coefficients.unwrap())
-    }
-
-    /// Returns the gain of the filter.
-    fn get_gain(&self) -> T {
-        unimplemented!("Gain is not applicable for high-pass filters.")
-    }
-
-    /// Sets the gain of the filter.
-    fn set_gain(&mut self, _gain: T) -> bool {
-        unimplemented!("Gain is not applicable for high-pass filters.")
-    }
-
-    /// Returns whether the filter should maintain a constant skirt gain.
-    fn get_constant_skirt_gain(&self) -> bool {
-        unimplemented!("Constant skirt gain is not applicable for high-pass filters.")
-    }
-
-    /// Sets whether the filter should maintain a constant skirt gain.
-    fn set_constant_skirt_gain(&mut self, _constant_skirt_gain: bool) -> bool {
-        unimplemented!("Constant skirt gain is not applicable for high-pass filters.")
     }
 }

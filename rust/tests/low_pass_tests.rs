@@ -72,12 +72,9 @@ fn set_cutoff_frequency() {
         44100_u32,
         std::f64::consts::FRAC_1_SQRT_2
     ).unwrap();
-    let mut config = filter.get_configuration();
-    assert_relative_eq!(config.get_cutoff(), 1000.0_f64);
-    config.set_cutoff(2000.0_f64);
-    filter.set_configuration(config);
-    let new_config = filter.get_configuration();
-    assert_relative_eq!(new_config.get_cutoff(), 2000.0_f64);
+    assert_relative_eq!(filter.get_cutoff(), 1000.0_f64);
+    filter.set_cutoff(2000.0_f64);
+    assert_relative_eq!(filter.get_cutoff(), 2000.0_f64);
 }
 
 #[test]
@@ -87,12 +84,9 @@ fn set_sample_rate() {
         44100_u32,
         std::f64::consts::FRAC_1_SQRT_2
     ).unwrap();
-    let mut config = filter.get_configuration();
-    assert_eq!(config.get_sample_rate(), 44100_u32);
-    config.set_sample_rate(48000_u32);
-    filter.set_configuration(config);
-    let new_config = filter.get_configuration();
-    assert_eq!(new_config.get_sample_rate(), 48000_u32);
+    assert_eq!(filter.get_sample_rate(), 44100_u32);
+    filter.set_sample_rate(48000_u32);
+    assert_eq!(filter.get_sample_rate(), 48000_u32);
 }
 
 #[test]
@@ -102,10 +96,7 @@ fn set_quality_factor() {
         44100_u32,
         std::f64::consts::FRAC_1_SQRT_2
     ).unwrap();
-    let mut config = filter.get_configuration();
-    assert_relative_eq!(config.get_q_factor(), std::f64::consts::FRAC_1_SQRT_2);
-    config.set_q_factor(1.0_f64);
-    filter.set_configuration(config);
-    let new_config = filter.get_configuration();
-    assert_relative_eq!(new_config.get_q_factor(), 1.0_f64);
+    assert_relative_eq!(filter.get_q_factor(), std::f64::consts::FRAC_1_SQRT_2);
+    filter.set_q_factor(1.0_f64);
+    assert_relative_eq!(filter.get_q_factor(), 1.0_f64);
 }
