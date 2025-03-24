@@ -1,3 +1,5 @@
+use crate::filters::biquad::{Coefficients, DigitalBiquadFilter};
+use crate::filters::filter_configuration::FilterConfiguration;
 /// filter.rs
 
 /**
@@ -22,8 +24,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 use num_traits::Float;
-use crate::filters::biquad::{Coefficients, DigitalBiquadFilter};
-use crate::filters::filter_configuration::FilterConfiguration;
 
 pub trait BiquadFilterWrapper<T: Float + Default + Copy + std::ops::MulAssign> {
     fn get_filter(&mut self) -> &mut DigitalBiquadFilter<T>;
@@ -69,79 +69,107 @@ where
     T: Float + Default + Copy + std::ops::MulAssign,
     F: BiquadFilterWrapper<T>,
 {
+    /// Processes a single sample in-place and returns a boolean indicating success.
     fn process(&mut self, sample: &mut T) -> bool {
         self.get_filter().process(sample)
     }
 
+    /// Processes a block of samples in-place and returns a boolean indicating success.
     fn process_block(&mut self, samples: &mut [T]) -> bool {
         self.get_filter().process_block(samples)
     }
 
+    /// Returns the current configuration of the filter.
     fn get_configuration(&self) -> FilterConfiguration<T> {
         self.get_config().clone()
     }
 
+    /// Sets the configuration of the filter.
     fn set_configuration(&mut self, config: FilterConfiguration<T>) -> bool {
         *self.get_config_mut() = config;
-        if let Some(coeffs) = Self::calculate_coefficients(self.get_config()) {
-            self.get_filter().set_coefficients(coeffs)
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
         } else {
             false
         }
     }
 
+    /// Returns the cutoff frequency of the filter.
     fn get_cutoff(&self) -> T {
         self.get_config().get_cutoff()
     }
 
+    /// Sets the cutoff frequency of the filter.
     fn set_cutoff(&mut self, cutoff: T) -> bool {
         self.get_config_mut().set_cutoff(cutoff);
-        if let Some(coeffs) = Self::calculate_coefficients(self.get_config()) {
-            self.get_filter().set_coefficients(coeffs)
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
         } else {
             false
         }
     }
 
+    /// Returns the sample rate of the filter.
     fn get_sample_rate(&self) -> u32 {
         self.get_config().get_sample_rate()
     }
 
+    /// Sets the sample rate of the filter.
     fn set_sample_rate(&mut self, rate: u32) -> bool {
         self.get_config_mut().set_sample_rate(rate);
-        if let Some(coeffs) = Self::calculate_coefficients(self.get_config()) {
-            self.get_filter().set_coefficients(coeffs)
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
         } else {
             false
         }
     }
 
+    /// Returns the Q factor of the filter.
     fn get_q_factor(&self) -> T {
         self.get_config().get_q_factor()
     }
 
+    /// Sets the Q factor of the filter.
     fn set_q_factor(&mut self, q: T) -> bool {
         self.get_config_mut().set_q_factor(q);
-        if let Some(coeffs) = Self::calculate_coefficients(self.get_config()) {
-            self.get_filter().set_coefficients(coeffs)
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
         } else {
             false
         }
     }
 
+    /// Returns the gain of the filter. This is only applicable for peaking and shelving filters.
     fn get_gain(&self) -> T {
-        unimplemented!("Gain is not applicable.")
+        self.get_config().get_gain()
     }
 
-    fn set_gain(&mut self, _gain: T) -> bool {
-        unimplemented!("Gain is not applicable.")
+    /// Sets the gain of the filter. This is only applicable for peaking and shelving filters.
+    /// If this parameter is not applicable for the current filter type, this will do nothing.
+    fn set_gain(&mut self, gain: T) -> bool {
+        self.get_config_mut().set_gain(gain);
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
+        } else {
+            false
+        }
     }
 
+    /// Returns whether the filter has a constant skirt gain. This is only applicable for band-pass
+    /// filters.
     fn get_constant_skirt_gain(&self) -> bool {
-        unimplemented!("Constant skirt gain is not applicable.")
+        self.get_config().get_constant_skirt_gain()
     }
 
-    fn set_constant_skirt_gain(&mut self, _constant_skirt_gain: bool) -> bool {
-        unimplemented!("Constant skirt gain is not applicable.")
+    /// Sets whether the filter should have a constant skirt gain. This is only applicable for
+    /// band-pass filters. If this parameter is not applicable for the current filter type, this
+    /// will do nothing.
+    fn set_constant_skirt_gain(&mut self, constant_skirt_gain: bool) -> bool {
+        self.get_config_mut().set_constant_skirt_gain(constant_skirt_gain);
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
+        } else {
+            false
+        }
     }
 }

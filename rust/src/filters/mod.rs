@@ -26,3 +26,4 @@ pub mod filter;
 pub mod filter_configuration;
 pub mod high_pass;
 pub mod low_pass;
+pub mod band_pass;
