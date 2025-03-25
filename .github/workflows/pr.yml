@@ -23,6 +23,8 @@ jobs:
               - 'rust/**'
             cpp:
               - 'cpp/**'
+            python:
+              - 'python/**'
 
   cpp-build:
     needs: detect-changes
@@ -141,7 +143,12 @@ jobs:
           cargo test
 
   python-build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.python == 'true'
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: python
 
     strategy:
       matrix:
