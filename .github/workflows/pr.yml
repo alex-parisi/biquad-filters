@@ -12,6 +12,7 @@ jobs:
     outputs:
       rust: ${{ steps.changes.outputs.rust }}
       cpp: ${{ steps.changes.outputs.cpp }}
+      python: ${{ steps.changes.outputs.python }}
     steps:
       - uses: actions/checkout@v4
       - name: Check paths
