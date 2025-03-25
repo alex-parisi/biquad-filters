@@ -62,6 +62,10 @@ pub trait Filter<T: Float + Default> {
     fn get_constant_skirt_gain(&self) -> bool;
     /// Sets whether the filter should have a constant skirt gain.
     fn set_constant_skirt_gain(&mut self, constant_skirt_gain: bool) -> bool;
+    /// Returns whether the filter should be bypassed.
+    fn get_bypass(&self) -> bool;
+    /// Sets whether the filter should be bypassed.
+    fn set_bypass(&mut self, bypass: bool) -> bool;
 }
 
 impl<T, F> Filter<T> for F
@@ -71,11 +75,17 @@ where
 {
     /// Processes a single sample in-place and returns a boolean indicating success.
     fn process(&mut self, sample: &mut T) -> bool {
+        if self.get_config().get_bypass() {
+            return true;
+        }
         self.get_filter().process(sample)
     }
 
     /// Processes a block of samples in-place and returns a boolean indicating success.
     fn process_block(&mut self, samples: &mut [T]) -> bool {
+        if self.get_config().get_bypass() {
+            return true;
+        }
         self.get_filter().process_block(samples)
     }
 
@@ -165,7 +175,23 @@ where
     /// band-pass filters. If this parameter is not applicable for the current filter type, this
     /// will do nothing.
     fn set_constant_skirt_gain(&mut self, constant_skirt_gain: bool) -> bool {
-        self.get_config_mut().set_constant_skirt_gain(constant_skirt_gain);
+        self.get_config_mut()
+            .set_constant_skirt_gain(constant_skirt_gain);
+        if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
+            self.get_filter().set_coefficients(coefficients)
+        } else {
+            false
+        }
+    }
+
+    /// Returns whether the filter should be bypassed.
+    fn get_bypass(&self) -> bool {
+        self.get_config().get_bypass()
+    }
+
+    /// Sets whether the filter should be bypassed.
+    fn set_bypass(&mut self, bypass: bool) -> bool {
+        self.get_config_mut().set_bypass(bypass);
         if let Some(coefficients) = Self::calculate_coefficients(self.get_config()) {
             self.get_filter().set_coefficients(coefficients)
         } else {

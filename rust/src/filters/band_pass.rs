@@ -27,6 +27,7 @@ use crate::filters::filter_configuration::FilterConfiguration;
 use num_traits::Float;
 use std::f64::consts::PI;
 
+
 /// Band-pass filter implementation using a digital biquad filter.
 #[derive(Debug, Clone)]
 pub struct BandPassFilter<T: Float + Default + Copy> {
@@ -39,7 +40,14 @@ pub struct BandPassFilter<T: Float + Default + Copy> {
 impl<T: Float + Default + Copy + std::ops::MulAssign> BandPassFilter<T> {
     /// Creates a new band-pass filter with the given cutoff frequency, sample rate, and Q factor.
     pub fn new(cutoff: T, sample_rate: u32, q_factor: T, constant_skirt: bool) -> Option<Self> {
-        let config = FilterConfiguration::new(cutoff, sample_rate, q_factor, T::zero(), constant_skirt);
+        let config = FilterConfiguration::new(
+            cutoff,
+            sample_rate,
+            q_factor,
+            T::zero(),
+            constant_skirt,
+            false,
+        );
         let coefficients = Self::calculate_coefficients(&config)?;
         let filter = DigitalBiquadFilter::new(coefficients)?;
         Some(Self { filter, config })

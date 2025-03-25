@@ -27,6 +27,7 @@ use crate::filters::filter_configuration::FilterConfiguration;
 use num_traits::Float;
 use std::f64::consts::PI;
 
+
 /// Low-pass filter implementation using a digital biquad filter.
 #[derive(Debug, Clone)]
 pub struct LowPassFilter<T: Float + Default + Copy> {
@@ -39,7 +40,14 @@ pub struct LowPassFilter<T: Float + Default + Copy> {
 impl<T: Float + Default + Copy + std::ops::MulAssign> LowPassFilter<T> {
     /// Creates a new low-pass filter with the given cutoff frequency, sample rate, and Q factor.
     pub fn new(cutoff: T, sample_rate: u32, q_factor: T) -> Option<Self> {
-        let config = FilterConfiguration::new(cutoff, sample_rate, q_factor, T::zero(), false);
+        let config = FilterConfiguration::new(
+            cutoff,
+            sample_rate,
+            q_factor,
+            T::zero(),
+            false,
+            false
+        );
         let coefficients = Self::calculate_coefficients(&config)?;
         let filter = DigitalBiquadFilter::new(coefficients)?;
         Some(Self { filter, config })

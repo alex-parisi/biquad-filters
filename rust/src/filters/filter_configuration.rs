@@ -1,4 +1,3 @@
-use std::ops::MulAssign;
 /// filter_configuration.rs
 
 /**
@@ -22,7 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-use num_traits::Float;
+use num_traits::{Float, Zero};
+use std::ops::MulAssign;
+
 
 /// Configuration for a filter.
 #[derive(Debug, Clone, Copy)]
@@ -32,6 +33,7 @@ pub struct FilterConfiguration<T: Float + Default> {
     q_factor: T,
     gain: T,
     constant_skirt_gain: bool,
+    bypass: bool,
 }
 
 /// Implementation of FilterConfiguration.
@@ -40,13 +42,21 @@ impl<T> FilterConfiguration<T>
 where
     T: Float + Default + MulAssign + Copy,
 {
-    pub fn new(cutoff: T, sample_rate: u32, q_factor: T, gain: T, constant_skirt_gain: bool) -> Self {
+    pub fn new(
+        cutoff: T,
+        sample_rate: u32,
+        q_factor: T,
+        gain: T,
+        constant_skirt_gain: bool,
+        bypass: bool,
+    ) -> Self {
         Self {
             cutoff,
             sample_rate,
             q_factor,
             gain,
             constant_skirt_gain,
+            bypass,
         }
     }
 
@@ -99,6 +109,16 @@ where
     pub fn set_constant_skirt_gain(&mut self, value: bool) {
         self.constant_skirt_gain = value;
     }
+
+    /// Sets whether the filter should bypass the filter.
+    pub fn set_bypass(&mut self, value: bool) {
+        self.bypass = value;
+    }
+
+    /// Returns whether the filter should bypass the filter.
+    pub fn get_bypass(&self) -> bool {
+        self.bypass
+    }
 }
 
 /// Implementing Default for FilterConfiguration.
@@ -106,10 +126,11 @@ impl<T: Float + Default> Default for FilterConfiguration<T> {
     fn default() -> Self {
         Self {
             cutoff: T::zero(),
-            sample_rate: u32::default(),
+            sample_rate: u32::zero(),
             q_factor: T::zero(),
             gain: T::zero(),
-            constant_skirt_gain: bool::default(),
+            constant_skirt_gain: false,
+            bypass: true,
         }
     }
 }
