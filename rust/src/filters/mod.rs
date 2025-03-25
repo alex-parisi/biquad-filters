@@ -29,3 +29,6 @@ pub mod low_pass;
 pub mod band_pass;
 pub mod notch;
 pub mod all_pass;
+pub mod peaking_eq;
+pub mod low_shelf;
+pub mod high_shelf;
