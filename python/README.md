@@ -13,3 +13,5 @@ For information on biquad filters, you can check out my
 website [here](https://atparisi.com/html/digitalBiquadFilter.html).
 
 ---
+
+### Usage:
