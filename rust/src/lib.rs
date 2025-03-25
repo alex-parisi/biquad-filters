@@ -21,4 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-pub mod filters;
+mod filters;
+
+pub use crate::filters::filter::Filter;
+pub use crate::filters::biquad::{Coefficients, DigitalBiquadFilter};
+pub use crate::filters::low_pass::LowPassFilter;
+pub use crate::filters::high_pass::HighPassFilter;
+pub use crate::filters::band_pass::BandPassFilter;
+pub use crate::filters::all_pass::AllPassFilter;
+pub use crate::filters::notch::NotchFilter;
+pub use crate::filters::peaking_eq::PeakingEQFilter;
+pub use crate::filters::low_shelf::LowShelfFilter;
+pub use crate::filters::high_shelf::HighShelfFilter;

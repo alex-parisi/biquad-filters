@@ -21,8 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-use biquad_filters::filters::filter::Filter;
-use biquad_filters::filters::band_pass::BandPassFilter;
+use biquad_filters::{Filter, BandPassFilter};
 use approx::assert_relative_eq;
 
 #[test]
