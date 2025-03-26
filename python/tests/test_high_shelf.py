@@ -25,7 +25,7 @@ SOFTWARE.
 import unittest
 import math
 
-from biquads import HighShelfFilter
+from src.biquads import HighShelfFilter
 
 
 class TestHighShelfFilter(unittest.TestCase):

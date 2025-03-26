@@ -25,7 +25,7 @@ SOFTWARE.
 import unittest
 import math
 
-from biquads import HighPassFilter
+from src.biquads import HighPassFilter
 
 
 class TestHighPassFilter(unittest.TestCase):

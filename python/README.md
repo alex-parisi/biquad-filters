@@ -15,3 +15,18 @@ website [here](https://atparisi.com/html/digitalBiquadFilter.html).
 ---
 
 ### Usage:
+
+
+---
+
+### Supported Filters:
+
+- Generic Digital Biquad
+- Low Pass
+- High Pass
+- Band Pass
+- Notch
+- All Pass
+- Peaking EQ
+- Low Shelf
+- High Shelf

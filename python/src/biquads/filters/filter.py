@@ -25,7 +25,7 @@ SOFTWARE.
 import numpy as np
 from typing import Optional
 
-from biquads.filters.biquad import DigitalBiquadFilter, Coefficients
+from src.biquads.filters.biquad import DigitalBiquadFilter, Coefficients
 
 
 class FilterObject:

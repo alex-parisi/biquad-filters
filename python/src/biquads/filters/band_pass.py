@@ -1,4 +1,4 @@
-# high_pass.py
+# band_pass.py
 
 """
 Copyright © 2025 Alex Parisi
@@ -24,41 +24,46 @@ SOFTWARE.
 import math
 from typing import Optional
 
-from biquads.filters.biquad import DigitalBiquadFilter, Coefficients
-from biquads.filters.filter import FilterObject
+from src.biquads.filters.biquad import DigitalBiquadFilter, Coefficients
+from src.biquads.filters.filter import FilterObject
 
 
-class HighPassFilter(FilterObject):
+class BandPassFilter(FilterObject):
     """
-    High-pass filter object.
+    Band-pass filter object.
     """
 
-    def __init__(self, cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)):
+    def __init__(self, cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0),
+                 constant_skirt_gain: bool = False):
         """
-        Initialize the high-pass filter object.
-        :param cutoff: The cutoff frequency.
+        Initialize the band-pass filter object.
+        :param cutoff: The center frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
+        :param constant_skirt_gain: Whether to use a constant skirt gain.
         """
         super().__init__()
         self.m_cutoff = cutoff
         self.m_sampleRate = sample_rate
         self.m_qFactor = q_factor
+        self.m_constantSkirtGain = constant_skirt_gain
         coefficients = self.calculate_coefficients()
         self.m_filter = DigitalBiquadFilter.create(coefficients)
 
     @staticmethod
-    def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)) -> Optional['HighPassFilter']:
+    def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0),
+               constant_skirt_gain: bool = False) -> Optional['BandPassFilter']:
         """
-        Create a high-pass filter object.
-        :param cutoff: The cutoff frequency.
+        Create a band-pass filter object.
+        :param cutoff: The center frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
-        :return: The high-pass filter object.
+        :param constant_skirt_gain: Whether to use a constant skirt gain.
+        :return: The band-pass filter object.
         """
         if not FilterObject.verify_parameters(cutoff, sample_rate, q_factor):
             return None
-        f = HighPassFilter(cutoff, sample_rate, q_factor)
+        f = BandPassFilter(cutoff, sample_rate, q_factor, constant_skirt_gain)
         if not f.m_filter:
             return None
         return f
@@ -71,9 +76,14 @@ class HighPassFilter(FilterObject):
         w0 = 2.0 * math.pi * self.m_cutoff / self.m_sampleRate
         cos_w0 = math.cos(w0)
         alpha = math.sin(w0) / (2.0 * self.m_qFactor)
-        b1 = -(1.0 + cos_w0)
-        b0 = -b1 / 2.0
-        b2 = b0
+        if self.m_constantSkirtGain:
+            b0 = self.m_qFactor * alpha
+            b1 = 0.0
+            b2 = -self.m_qFactor * alpha
+        else:
+            b0 = alpha
+            b1 = 0.0
+            b2 = -alpha
         a0 = 1.0 + alpha
         a1 = -2.0 * cos_w0
         a2 = 1.0 - alpha

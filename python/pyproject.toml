@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biquad-filters"
+version = "0.0.1"
+authors = [
+  { name="Alex Parisi", email="alex@atparisi.com" },
+]
+description = "A simple package for creating biquad filters"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+Homepage = "https://github.com/alex-parisi/biquad-filters"
+Issues = "https://github.com/alex-parisi/biquad-filters/issues"

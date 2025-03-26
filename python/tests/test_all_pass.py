@@ -25,7 +25,7 @@ SOFTWARE.
 import unittest
 import math
 
-from biquads import AllPassFilter
+from src.biquads import AllPassFilter
 
 
 class TestAllPassFilter(unittest.TestCase):

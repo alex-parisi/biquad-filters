@@ -1,4 +1,4 @@
-# low_pass.py
+# notch.py
 
 """
 Copyright © 2025 Alex Parisi
@@ -24,18 +24,18 @@ SOFTWARE.
 import math
 from typing import Optional
 
-from biquads.filters.biquad import DigitalBiquadFilter, Coefficients
-from biquads.filters.filter import FilterObject
+from src.biquads.filters.biquad import DigitalBiquadFilter, Coefficients
+from src.biquads.filters.filter import FilterObject
 
 
-class LowPassFilter(FilterObject):
+class NotchFilter(FilterObject):
     """
-    Low-pass filter object.
+    Notch filter object.
     """
 
     def __init__(self, cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)):
         """
-        Initialize the low-pass filter object.
+        Initialize the notch filter object.
         :param cutoff: The cutoff frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
@@ -48,17 +48,17 @@ class LowPassFilter(FilterObject):
         self.m_filter = DigitalBiquadFilter.create(coefficients)
 
     @staticmethod
-    def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)) -> Optional['LowPassFilter']:
+    def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)) -> Optional['NotchFilter']:
         """
-        Create a low-pass filter object.
+        Create a notch filter object.
         :param cutoff: The cutoff frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
-        :return: The low-pass filter object.
+        :return: The notch filter object.
         """
         if not FilterObject.verify_parameters(cutoff, sample_rate, q_factor):
             return None
-        f = LowPassFilter(cutoff, sample_rate, q_factor)
+        f = NotchFilter(cutoff, sample_rate, q_factor)
         if not f.m_filter:
             return None
         return f
@@ -71,9 +71,9 @@ class LowPassFilter(FilterObject):
         w0 = 2.0 * math.pi * self.m_cutoff / self.m_sampleRate
         cos_w0 = math.cos(w0)
         alpha = math.sin(w0) / (2.0 * self.m_qFactor)
-        b1 = 1.0 - cos_w0
-        b0 = b1 / 2.0
-        b2 = b0
+        b0 = 1.0
+        b1 = -2.0 * cos_w0
+        b2 = 1.0
         a0 = 1.0 + alpha
         a1 = -2.0 * cos_w0
         a2 = 1.0 - alpha

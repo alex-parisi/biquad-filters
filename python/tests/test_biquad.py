@@ -25,7 +25,7 @@ SOFTWARE.
 import unittest
 import numpy as np
 
-from biquads.filters.biquad import Coefficients, DigitalBiquadFilter
+from src.biquads.filters.biquad import Coefficients, DigitalBiquadFilter
 
 
 class TestDigitalBiquadFilter(unittest.TestCase):

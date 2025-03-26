@@ -25,7 +25,7 @@ SOFTWARE.
 import unittest
 import math
 
-from biquads import NotchFilter
+from src.biquads import NotchFilter
 
 
 class TestNotchFilter(unittest.TestCase):

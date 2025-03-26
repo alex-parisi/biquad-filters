@@ -1,4 +1,4 @@
-# all_pass.py
+# high_pass.py
 
 """
 Copyright © 2025 Alex Parisi
@@ -24,19 +24,19 @@ SOFTWARE.
 import math
 from typing import Optional
 
-from biquads.filters.biquad import DigitalBiquadFilter, Coefficients
-from biquads.filters.filter import FilterObject
+from src.biquads.filters.biquad import DigitalBiquadFilter, Coefficients
+from src.biquads.filters.filter import FilterObject
 
 
-class AllPassFilter(FilterObject):
+class HighPassFilter(FilterObject):
     """
-    All-pass filter object.
+    High-pass filter object.
     """
 
     def __init__(self, cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)):
         """
-        Initialize the all-pass filter object.
-        :param cutoff: The center frequency.
+        Initialize the high-pass filter object.
+        :param cutoff: The cutoff frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
         """
@@ -48,17 +48,17 @@ class AllPassFilter(FilterObject):
         self.m_filter = DigitalBiquadFilter.create(coefficients)
 
     @staticmethod
-    def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)) -> Optional['AllPassFilter']:
+    def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0)) -> Optional['HighPassFilter']:
         """
-        Create a all-pass filter object.
-        :param cutoff: The center frequency.
+        Create a high-pass filter object.
+        :param cutoff: The cutoff frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
-        :return: The all-pass filter object.
+        :return: The high-pass filter object.
         """
         if not FilterObject.verify_parameters(cutoff, sample_rate, q_factor):
             return None
-        f = AllPassFilter(cutoff, sample_rate, q_factor)
+        f = HighPassFilter(cutoff, sample_rate, q_factor)
         if not f.m_filter:
             return None
         return f
@@ -71,9 +71,9 @@ class AllPassFilter(FilterObject):
         w0 = 2.0 * math.pi * self.m_cutoff / self.m_sampleRate
         cos_w0 = math.cos(w0)
         alpha = math.sin(w0) / (2.0 * self.m_qFactor)
-        b0 = 1.0 - alpha
-        b1 = -2.0 * cos_w0
-        b2 = 1.0 + alpha
+        b1 = -(1.0 + cos_w0)
+        b0 = -b1 / 2.0
+        b2 = b0
         a0 = 1.0 + alpha
         a1 = -2.0 * cos_w0
         a2 = 1.0 - alpha

@@ -25,7 +25,7 @@ SOFTWARE.
 import unittest
 import math
 
-from biquads import PeakingEQFilter
+from src.biquads import PeakingEQFilter
 
 
 class TestPeakingEQFilter(unittest.TestCase):

@@ -1,4 +1,4 @@
-# low_shelf.py
+# high_shelf.py
 
 """
 Copyright © 2025 Alex Parisi
@@ -24,19 +24,19 @@ SOFTWARE.
 import math
 from typing import Optional
 
-from biquads.filters.biquad import DigitalBiquadFilter, Coefficients
-from biquads.filters.filter import FilterObject
+from src.biquads.filters.biquad import DigitalBiquadFilter, Coefficients
+from src.biquads.filters.filter import FilterObject
 
 
-class LowShelfFilter(FilterObject):
+class HighShelfFilter(FilterObject):
     """
-    Low shelf filter object.
+    High shelf filter object.
     """
 
     def __init__(self, cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0),
                  gain: float = 0.0):
         """
-        Initialize the low shelf filter object.
+        Initialize the high shelf filter object.
         :param cutoff: The center frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
@@ -52,18 +52,18 @@ class LowShelfFilter(FilterObject):
 
     @staticmethod
     def create(cutoff: float, sample_rate: int, q_factor: float = 1.0 / math.sqrt(2.0),
-               gain: float = 0.0) -> Optional['LowShelfFilter']:
+               gain: float = 0.0) -> Optional['HighShelfFilter']:
         """
-        Create a low shelf filter object.
+        Create a high shelf filter object.
         :param cutoff: The center frequency.
         :param sample_rate: The sample rate.
         :param q_factor: The Q factor.
         :param gain: The gain.
-        :return: The low shelf filter object.
+        :return: The high shelf filter object.
         """
         if not FilterObject.verify_parameters(cutoff, sample_rate, q_factor):
             return None
-        f = LowShelfFilter(cutoff, sample_rate, q_factor, gain)
+        f = HighShelfFilter(cutoff, sample_rate, q_factor, gain)
         if not f.m_filter:
             return None
         return f
@@ -77,10 +77,10 @@ class LowShelfFilter(FilterObject):
         cos_w0 = math.cos(w0)
         alpha = math.sin(w0) / (2.0 * self.m_qFactor)
         a = math.pow(10.0, self.m_gain / 40.0)
-        b0 = a * ((a + 1.0) - (a - 1.0) * cos_w0 + 2.0 * math.sqrt(a) * alpha)
-        b1 = 2.0 * a * ((a - 1.0) - (a + 1.0) * cos_w0)
-        b2 = a * ((a + 1.0) - (a - 1.0) * cos_w0 - 2.0 * math.sqrt(a) * alpha)
-        a0 = (a + 1.0) + (a - 1.0) * cos_w0 + 2.0 * math.sqrt(a) * alpha
-        a1 = -2.0 * ((a - 1.0) + (a + 1.0) * cos_w0)
-        a2 = (a + 1.0) + (a - 1.0) * cos_w0 - 2.0 * math.sqrt(a) * alpha
+        b0 = a * ((a + 1.0) + (a - 1.0) * cos_w0 + 2.0 * math.sqrt(a) * alpha)
+        b1 = -2.0 * a * ((a - 1.0) + (a + 1.0) * cos_w0)
+        b2 = a * ((a + 1.0) + (a - 1.0) * cos_w0 - 2.0 * math.sqrt(a) * alpha)
+        a0 = (a + 1.0) - (a - 1.0) * cos_w0 + 2.0 * math.sqrt(a) * alpha
+        a1 = 2.0 * ((a - 1.0) - (a + 1.0) * cos_w0)
+        a2 = (a + 1.0) - (a - 1.0) * cos_w0 - 2.0 * math.sqrt(a) * alpha
         return Coefficients(b0, b1, b2, a0, a1, a2)
