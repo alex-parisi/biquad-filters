@@ -1,8 +1,8 @@
 # Digital Biquad Filters
 
 This repository contains a collection of digital biquad filters. Right now, 
-there is support for C++ and Rust, but I plan on adding more languages in the
-future.
+there is support for C++, Rust, and Python, but I plan on adding more languages 
+in the future.
 
 ---
 
@@ -11,7 +11,8 @@ future.
     - **SIMD Support**: *AVX*, *SSE*, *NEON*
 - [Rust](rust/)
     - Available on *Crates.io* [here](https://crates.io/crates/biquad-filters-rust)
-
+- [Python](python/)
+    - Available via `pip` and on *PyPi* [here](https://pypi.org/project/biquad-filters/)
 ---
 
 ### Brief:

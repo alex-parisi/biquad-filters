@@ -16,10 +16,16 @@ website [here](https://atparisi.com/html/digitalBiquadFilter.html).
 
 ### Usage:
 
-To use the filters, simply add `biquad-filters-rust` to your Rust project,
-create an instance of the filter, and process your data:
+To add the filters to your project, run the following Cargo command in your 
+project directory:
 
+```bash
+cargo add biquad-filters-rust
 ```
+
+Then, simply create an instance of a filter and process your data:
+
+```rust
 /// Import the biquad_filters crate
 use biquad_filters::{Filter, LowPassFilter};
 
