@@ -33,6 +33,15 @@ else()
     message(FATAL_ERROR "Unsupported build type: ${CMAKE_BUILD_TYPE}")
 endif ()
 
+add_library(DigitalBiquad INTERFACE)
+
+target_include_directories(DigitalBiquad
+        INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+        $<INSTALL_INTERFACE:include>
+)
+
+
 #############
 ### TESTS ###
 #############

@@ -27,7 +27,7 @@ SOFTWARE.
 #include <iostream>
 #include <vector>
 
-#include "DigitalBiquadFilter.h"
+#include <DigitalBiquad/DigitalBiquadFilter.h>
 
 /**
  * @brief Benchmark the creation of a valid filter

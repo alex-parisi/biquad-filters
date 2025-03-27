@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "AllPassFilter.h"
+#include <DigitalBiquad/AllPassFilter.h>
 
 TEST(AllPassFilterTest, CreateValidDoubleFilter) {
     const std::optional<AllPassFilter<double>> filter =

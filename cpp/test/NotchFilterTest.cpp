@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "NotchFilter.h"
+#include <DigitalBiquad/NotchFilter.h>
 
 TEST(NotchFilterTest, CreateValidDoubleFilter) {
     const std::optional<NotchFilter<double>> filter =

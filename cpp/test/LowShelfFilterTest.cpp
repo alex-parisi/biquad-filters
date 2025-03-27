@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "LowShelfFilter.h"
+#include <DigitalBiquad/LowShelfFilter.h>
 
 TEST(LowShelfFilterTest, CreateValidDoubleFilter) {
     const std::optional<LowShelfFilter<double>> filter =

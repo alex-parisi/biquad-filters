@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "BandPassFilter.h"
+#include <DigitalBiquad/BandPassFilter.h>
 
 TEST(BandPassFilterTest, CreateValidDoubleFilter) {
     const std::optional<BandPassFilter<double>> filter =

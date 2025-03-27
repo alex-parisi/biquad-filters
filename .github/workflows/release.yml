@@ -52,7 +52,7 @@ jobs:
         run: |
           mkdir -p cpp_biquad_filters
           cp VERSION.txt cpp_biquad_filters/
-          cp -r cpp/inc cpp_biquad_filters/
+          cp -r cpp/inc/DigitalBiquad cpp_biquad_filters/
           cp LICENSE cpp_biquad_filters/
           cd cpp_biquad_filters
           zip -r ../cpp_biquad_filters.zip .

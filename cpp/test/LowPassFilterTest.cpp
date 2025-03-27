@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "LowPassFilter.h"
+#include <DigitalBiquad/LowPassFilter.h>
 
 TEST(LowPassFilterTest, CreateValidDoubleFilter) {
     const std::optional<LowPassFilter<double>> filter =

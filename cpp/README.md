@@ -21,10 +21,16 @@ website [here](https://atparisi.com/html/digitalBiquadFilter.html).
 To use the filters, simply download `cpp_biquad_filters.zip` from the latest release [here](https://github.com/alex-parisi/biquad-filters/releases/latest), include the 
 header files in your project, and create an instance of the filter. 
 
+It's also much easier to just use CMake:
+
+```cmake
+set(CMAKE_CXX_STANDARD 20)
+```
+
 Here is an example of how to use a filter:
 
 ```cpp
-#include "LowPassFilter.h"
+#include <DigitalBiquad/LowPassFilter.h>
 
 /// Create a low pass filter with a cutoff frequency of 1000 Hz
 /// and a sample rate of 44100 Hz

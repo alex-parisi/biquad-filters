@@ -2,7 +2,7 @@
 
 #include <gtest/gtest.h>
 
-#include "PeakingEQFilter.h"
+#include <DigitalBiquad/PeakingEQFilter.h>
 
 TEST(PeakingEQFilterTest, CreateValidDoubleFilter) {
     const std::optional<PeakingEQFilter<double>> filter =

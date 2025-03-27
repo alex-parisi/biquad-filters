@@ -5,7 +5,7 @@
 #include <optional>
 #include <vector>
 
-#include "DigitalBiquadFilter.h"
+#include <DigitalBiquad/DigitalBiquadFilter.h>
 
 /**
  * @brief Test the creation of a valid filter
