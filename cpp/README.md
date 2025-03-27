@@ -25,6 +25,17 @@ It's also much easier to just use CMake:
 
 ```cmake
 set(CMAKE_CXX_STANDARD 20)
+
+include(FetchContent)
+FetchContent_Declare(
+        DigitalBiquad
+        GIT_REPOSITORY https://github.com/alex-parisi/biquad-filters.git
+        GIT_TAG        main
+        SOURCE_SUBDIR cpp
+)
+FetchContent_MakeAvailable(DigitalBiquad)
+
+target_link_libraries(<target_name> PRIVATE DigitalBiquad)
 ```
 
 Here is an example of how to use a filter:
